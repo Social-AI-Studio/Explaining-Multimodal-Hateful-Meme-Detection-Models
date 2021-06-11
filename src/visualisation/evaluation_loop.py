@@ -3,6 +3,7 @@ import torchvision
 import tqdm
 
 import logging
+import os
 
 from mmf.trainers.mmf_trainer import MMFTrainer
 from mmf.common.sample import to_device
@@ -29,7 +30,6 @@ def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, 
     use_cpu = trainer.config.evaluation.get("use_cpu", False)
     loaded_batches = 0
     skipped_batches = 0
-    counter = 0
 
     # with torch.no_grad():
     trainer.model.eval()
@@ -56,8 +56,7 @@ def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, 
                     continue
                 
                 # Generate Class Acitvation Map
-                generate_cam(cam, trainer.config.model, rgb_img, prepared_batch, counter)
-                counter += 1
+                generate_cam(cam, trainer.config.model, rgb_img, prepared_batch)
 
                 model_output = trainer.model(prepared_batch)
                 report = Report(prepared_batch, model_output)
@@ -124,7 +123,7 @@ def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, 
 
     return combined_report, meter
 
-def generate_cam(cam, model_name, rgb_img, prepared_batch, counter):
+def generate_cam(cam, model_name, rgb_img, prepared_batch):
     # Generate cam
     grayscale_cam = cam(input_tensor=prepared_batch)
 
@@ -136,8 +135,12 @@ def generate_cam(cam, model_name, rgb_img, prepared_batch, counter):
 
     # cam_image is RGB encoded whereas "cv2.imwrite" requires BGR encoding.
     cam_image = cv2.cvtColor(cam_image, cv2.COLOR_RGB2BGR)
-    cv2.imwrite(f'/opt/mshee/code/explainable-multimodal-hateful-content/images/{model_name}/{counter}.jpg', deprocess_image(rgb_img))
-    cv2.imwrite(f'/opt/mshee/code/explainable-multimodal-hateful-content/images/{model_name}/{counter}_cam.jpg', cam_image)
+
+    image_dir = f'/opt/mshee/code/explainable-multimodal-hateful-content/images/{model_name}'
+    os.makedirs(image_dir, exist_ok=True)
+
+    cv2.imwrite(f'{image_dir}/{prepared_batch.id[0].item()}.jpg', deprocess_image(rgb_img))
+    cv2.imwrite(f'{image_dir}/{prepared_batch.id[0].item()}_cam.jpg', cam_image)
 
 def preprocess_image(img: np.ndarray, mean=None, std=None) -> torch.Tensor:
     if std is None:
