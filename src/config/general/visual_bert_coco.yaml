@@ -1,0 +1,6 @@
+includes:
+- ./visual_bert_coco_default.yaml
+
+checkpoint:
+  resume_pretrained: true
+  resume_zoo: visual_bert.pretrained.coco
