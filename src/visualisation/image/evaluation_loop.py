@@ -138,7 +138,7 @@ def generate_cam(cam, cam_name, rgb_img, prepared_batch, model_name, dataset_typ
     # cam_image is RGB encoded whereas "cv2.imwrite" requires BGR encoding.
     cam_image = cv2.cvtColor(cam_image, cv2.COLOR_RGB2BGR)
 
-    image_dir = f'/opt/mshee/code/explainable-multimodal-hateful-content/images/{cam_name}/{dataset_type}/{model_name}'
+    image_dir = f'/opt/mshee/code/explainable-multimodal-hateful-content/images/{dataset_type}/{cam_name}/{model_name}'
     os.makedirs(image_dir, exist_ok=True)
 
     cv2.imwrite(f'{image_dir}/{prepared_batch.id[0].item()}_cam.jpg', cam_image)
