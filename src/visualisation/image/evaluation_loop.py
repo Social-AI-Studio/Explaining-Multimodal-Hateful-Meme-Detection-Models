@@ -24,7 +24,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
-def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, use_tqdm: bool = False, single_batch: bool = False):
+def custom_evaluation_loop(cam: object, cam_name: str, trainer: MMFTrainer, dataset_type: str, use_tqdm: bool = False, single_batch: bool = False):
     meter = Meter()
     reporter = trainer.dataset_loader.get_test_reporter(dataset_type)
     use_cpu = trainer.config.evaluation.get("use_cpu", False)
@@ -47,7 +47,10 @@ def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, 
             
                 # Additional steps
                 rgb_img = np.array(prepared_batch.image[0])
-                prepared_batch.add_field('image', preprocess_image(rgb_img))
+                prepared_batch.add_field('image', 
+                                         preprocess_image(rgb_img, 
+                                                          mean=[0.46777044, 0.44531429, 0.40661017],
+                                                          std=[0.12221994, 0.12145835, 0.14380469]))
                 prepared_batch = to_device(prepared_batch, trainer.device)
 
                 if not validate_batch_sizes(prepared_batch.get_batch_size()):
@@ -56,7 +59,7 @@ def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, 
                     continue
                 
                 # Generate Class Acitvation Map
-                generate_cam(cam, trainer.config.model, rgb_img, prepared_batch)
+                generate_cam(cam, cam_name, rgb_img, prepared_batch, trainer.config.model, dataset_type)
 
                 model_output = trainer.model(prepared_batch)
                 report = Report(prepared_batch, model_output)
@@ -81,7 +84,6 @@ def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, 
                         moved_report, trainer.metrics.required_params
                     )
                     combined_report.batch_size += moved_report.batch_size
-
 
                 # Each node generates a separate copy of predict JSON from the
                 # report, which will be used to evaluate dataset-level metrics
@@ -123,7 +125,7 @@ def custom_evaluation_loop(cam: object, trainer: MMFTrainer, dataset_type: str, 
 
     return combined_report, meter
 
-def generate_cam(cam, model_name, rgb_img, prepared_batch):
+def generate_cam(cam, cam_name, rgb_img, prepared_batch, model_name, dataset_type):
     # Generate cam
     grayscale_cam = cam(input_tensor=prepared_batch)
 
@@ -136,10 +138,9 @@ def generate_cam(cam, model_name, rgb_img, prepared_batch):
     # cam_image is RGB encoded whereas "cv2.imwrite" requires BGR encoding.
     cam_image = cv2.cvtColor(cam_image, cv2.COLOR_RGB2BGR)
 
-    image_dir = f'/opt/mshee/code/explainable-multimodal-hateful-content/images/{model_name}'
+    image_dir = f'/opt/mshee/code/explainable-multimodal-hateful-content/images/{cam_name}/{dataset_type}/{model_name}'
     os.makedirs(image_dir, exist_ok=True)
 
-    cv2.imwrite(f'{image_dir}/{prepared_batch.id[0].item()}.jpg', deprocess_image(rgb_img))
     cv2.imwrite(f'{image_dir}/{prepared_batch.id[0].item()}_cam.jpg', cam_image)
 
 def preprocess_image(img: np.ndarray, mean=None, std=None) -> torch.Tensor:

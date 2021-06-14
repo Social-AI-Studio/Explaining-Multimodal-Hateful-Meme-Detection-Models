@@ -1,3 +1,6 @@
 #!/bin/bash
-bash scripts/visualise/mmf_concat_bert.sh
-bash scripts/visualise/mmf_late_fusion.sh
+bash scripts/visualisation/mmf_concat_bert.sh val
+bash scripts/visualisation/mmf_concat_bert.sh test
+
+bash scripts/visualisation/mmf_late_fusion.sh val
+bash scripts/visualisation/mmf_late_fusion.sh test

@@ -15,8 +15,8 @@ from mmf.utils.flags import flags
 from mmf.utils.general import log_device_names
 from mmf.utils.logger import setup_logger, setup_very_basic_config
 
-from pytorch_grad_cam import GradCAM
-from evaluation_loop import custom_evaluation_loop
+from pytorch_grad_cam import GradCAM, EigenCAM
+from evaluation_loop import custom_evaluation_loop, test_evaluation_loop
 
 setup_very_basic_config()
 
@@ -66,15 +66,21 @@ def main(configuration, init_distributed=False, predict=False):
         conv = trainer.model.base.modal.model[7][2].conv3
 
     # Prepare CAM object
-    cam = GradCAM(model=trainer.model, 
-                  target_layer=conv,
-                  use_cuda=torch.cuda.is_available())
+    # cam_name = 'gradcam'
+    # cam = GradCAM(model=trainer.model, 
+    #               target_layer=conv,
+    #               use_cuda=torch.cuda.is_available())
+
+    cam_name = 'eigencam'
+    cam = EigenCAM(model=trainer.model, 
+                   target_layer=conv,
+                   use_cuda=torch.cuda.is_available())
     
     # # trainer.inference()
     dataset = configuration.get_config()['run_type']
     trainer.on_test_start()
     logger.info(f"Starting inference on {dataset} set")
-    report, meter = custom_evaluation_loop(cam, trainer, dataset, use_tqdm=True)
+    report, meter = custom_evaluation_loop(cam, cam_name, trainer, dataset, use_tqdm=True)
     trainer.on_test_end(report=report, meter=meter)
 
 # def reshape_transform(tensor, height=14, width=14):
