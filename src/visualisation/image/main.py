@@ -16,7 +16,7 @@ from mmf.utils.general import log_device_names
 from mmf.utils.logger import setup_logger, setup_very_basic_config
 
 from pytorch_grad_cam import GradCAM, EigenCAM
-from evaluation_loop import custom_evaluation_loop, test_evaluation_loop
+from evaluation_loop import custom_evaluation_loop
 
 setup_very_basic_config()
 
@@ -82,15 +82,6 @@ def main(configuration, init_distributed=False, predict=False):
     logger.info(f"Starting inference on {dataset} set")
     report, meter = custom_evaluation_loop(cam, cam_name, trainer, dataset, use_tqdm=True)
     trainer.on_test_end(report=report, meter=meter)
-
-# def reshape_transform(tensor, height=14, width=14):
-#     result = tensor[:, 1 :  , :].reshape(tensor.size(0), 
-#         height, width, tensor.size(2))
-
-#     # Bring the channels to the first dimension,
-#     # like in CNNs.
-#     result = result.transpose(2, 3).transpose(1, 2)
-#     return result
 
 def run(opts: typing.Optional[typing.List[str]] = None, predict: bool = False):
     """Run starts a job based on the command passed from the command line.
