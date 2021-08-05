@@ -42,13 +42,15 @@
 
 | **Validation**    | Binary F1 | Accuracy | ROC AUC | Epoch |
 | ----------------- | --------- | -------- | ------- | :---: |
-| VilBERT (CC)      | 0.5879    | 0.6720   | 0.7502  |  19   |
+| VisualBert        | 0.5920    | 0.6720   | 0.7226  |  14   |
 | VisualBert (COCO) | 0.5333    | 0.6500   | 0.7400  |  29   |
+| VilBERT (CC)      | 0.5879    | 0.6720   | 0.7502  |  19   |
 
 | **Testing**       | Binary F1 | Accuracy | ROC AUC |
 | ----------------- | --------- | -------- | ------- |
-| VilBERT (CC)      | 0.6073    | 0.6870   | 0.7570  |
+| VisualBert        | 0.5902    | 0.6570   | 0.7325  |
 | VisualBert (COCO) | 0.5333    | 0.6500   | 0.7445  |
+| VilBERT (CC)      | 0.6073    | 0.6870   | 0.7570  |
 
 ## 2. Experiment Results (HatefulMemes v2)
 
@@ -83,7 +85,7 @@
 | ----------- | ------------- | ---------- | --------- | -------- | ------- |
 | Late Fusion | 1.0149        | 1.0149     | 0.3744    | 0.6560   | 0.6524  |
 | Concat BERT | 2.2556        | 2.2556     | 0.4198    | 0.6625   | 0.6625  |
-| VilBERT     |
+| VilBERT     |               |
 | VisualBert  | 1.2591        | 1.2591     | 0.4187    | 0.6860   | 0.7092  |
 
 ## 2. Visualisation - Class Activation Maps
@@ -92,3 +94,73 @@ https://docs.google.com/spreadsheets/d/15T45TmdODYCIYIzuluP_bdOvrpPkdT1VdSiWgLCP
 
 ## 3. Datasets
 
+### 3.1 Dataset Distribution
+
+| **Validation** | Total Records | Hateful Records |
+| -------------- | ------------- | --------------- |
+| Overall        | 500           | 247 (0.494)     |
+| Human          | 360           | 186 (0.5167)    |
+| Non-Human      | 140           | 61 (0.4357)     |
+
+
+| **Testing** | Total Records | Hateful Records |
+| ----------- | ------------- | --------------- |
+| Overall     | 1,000         | 490 (0.49)      |
+| Human       | 713           | 379 (0.5316)    |
+| Non-Human   | 287           | 111 (0.3868)    |
+
+
+### 3.2 Human Gender Distribution
+
+| Visual BERT | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
+| :---------- | -------------: | -----------------: | ------------------: | ----------------------: |
+| Female      |            132 |                113 |                  87 |                     158 |
+| Male        |            193 |                163 |                 130 |                     226 |
+| Mixed       |             54 |                 58 |                  37 |                      75 |
+
+| Visual BERT (COCO) | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
+| :----------------- | -------------: | -----------------: | ------------------: | ----------------------: |
+| Female             |            132 |                113 |                  71 |                     174 |
+| Male               |            193 |                163 |                 126 |                     230 |
+| Mixed              |             54 |                 58 |                  30 |                      82 |
+
+| VilBERT (CC) | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
+| :----------- | -------------: | -----------------: | ------------------: | ----------------------: |
+| Female       |            132 |                113 |                  66 |                     179 |
+| Male         |            193 |                163 |                 106 |                     250 |
+| Mixed        |             54 |                 58 |                  31 |                      81 |
+
+### 3.2 Human Race Distribution
+
+| Visual BERT     | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
+| :-------------- | -------------: | -----------------: | ------------------: | ----------------------: |
+| White           |            173 |                156 |                 118 |                     211 |
+| Mixed           |             82 |                 77 |                  60 |                      99 |
+| Black           |             61 |                 47 |                  34 |                      74 |
+| Middle Eastern  |             10 |                  8 |                   9 |                       9 |
+| East Asian      |             16 |                 16 |                   8 |                      24 |
+| Latino_Hispanic |             17 |                 21 |                  14 |                      24 |
+| Southeast Asian |              8 |                  5 |                   5 |                       8 |
+| Indian          |             12 |                  4 |                   6 |                      10 |
+
+| Visual BERT (COCO) | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
+| :----------------- | -------------: | -----------------: | ------------------: | ----------------------: |
+| White              |            173 |                156 |                 108 |                     221 |
+| Mixed              |             82 |                 77 |                  51 |                     108 |
+| Black              |             61 |                 47 |                  30 |                      78 |
+| Middle Eastern     |             10 |                  8 |                   9 |                       9 |
+| East Asian         |             16 |                 16 |                   9 |                      23 |
+| Latino_Hispanic    |             17 |                 21 |                  10 |                      28 |
+| Southeast Asian    |              8 |                  5 |                   5 |                       8 |
+| Indian             |             12 |                  4 |                   5 |                      11 |
+
+| VilBERT (CC)    | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
+| :-------------- | -------------: | -----------------: | ------------------: | ----------------------: |
+| White           |            173 |                156 |                 108 |                     221 |
+| Mixed           |             82 |                 77 |                  51 |                     108 |
+| Black           |             61 |                 47 |                  30 |                      78 |
+| Middle Eastern  |             10 |                  8 |                   9 |                       9 |
+| East Asian      |             16 |                 16 |                   9 |                      23 |
+| Latino_Hispanic |             17 |                 21 |                  10 |                      28 |
+| Southeast Asian |              8 |                  5 |                   5 |                       8 |
+| Indian          |             12 |                  4 |                   5 |                      11 |
