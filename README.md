@@ -4,19 +4,23 @@
 
 ### 1.1 Experiment Results (Pretrained Model)
 
-| **Validation** | Binary F1 | Accuracy | ROC AUC |
-| -------------- | --------- | -------- | ------- |
-| Late Fusion    | 0.3804    | 0.5700   | 0.6383  |
-| Concat BERT    | 0.5561    | 0.6360   | 0.6644  |
-| VilBERT        | 0.4393    | 0.6120   | 0.6881  |
-| VisualBert     | 0.4401    | 0.5980   | 0.7105  |
+| **Validation**    | Binary F1 | Accuracy | ROC AUC |
+| ----------------- | --------- | -------- | ------- |
+| Late Fusion       | 0.3804    | 0.5700   | 0.6383  |
+| Concat BERT       | 0.5561    | 0.6360   | 0.6644  |
+| VilBERT           | 0.4393    | 0.6120   | 0.6881  |
+| VisualBert        | 0.4401    | 0.5980   | 0.7105  |
+| VilBERT (CC)      |
+| VisualBert (COCO) | 0.4891    | 0.6420   | 0.7273  |
 
-| **Testing** | Binary F1 | Accuracy | ROC AUC |
-| ----------- | --------- | -------- | ------- |
-| Late Fusion | 0.4994    | 0.6070   | 0.6722  |
-| Concat BERT | 0.4739    | 0.6070   | 0.6891  |
-| VilBERT     | 0.4565    | 0.6190   | 0.7218  |
-| VisualBert  | 0.4972    | 0.6360   | 0.7307  |
+| **Testing**       | Binary F1 | Accuracy | ROC AUC |
+| ----------------- | --------- | -------- | ------- |
+| Late Fusion       | 0.4994    | 0.6070   | 0.6722  |
+| Concat BERT       | 0.4739    | 0.6070   | 0.6891  |
+| VilBERT           | 0.4565    | 0.6190   | 0.7218  |
+| VisualBert        | 0.4972    | 0.6360   | 0.7307  |
+| VilBERT (CC)      |
+| VisualBert (COCO) | 0.4938    | 0.6330   | 0.7179  |
 
 ### 1.2 Experiment Results (Train & Test on Uncleaned Images)
 
@@ -33,6 +37,18 @@
 | Concat BERT | 0.5133    | 0.6150   | 0.6912  |
 | VilBERT     | 0.5353    | 0.6580   | 0.7393  |
 | VisualBert  | 0.5835    | 0.6760   | 0.7395  |
+
+### 1.3 Experiment Results (Train & Test on Cleaned Images)
+
+| **Validation**    | Binary F1 | Accuracy | ROC AUC | Epoch |
+| ----------------- | --------- | -------- | ------- | :---: |
+| VilBERT (CC)      | 0.5879    | 0.6720   | 0.7502  |  19   |
+| VisualBert (COCO) | 0.5333    | 0.6500   | 0.7400  |  29   |
+
+| **Testing**       | Binary F1 | Accuracy | ROC AUC |
+| ----------------- | --------- | -------- | ------- |
+| VilBERT (CC)      | 0.6073    | 0.6870   | 0.7570  |
+| VisualBert (COCO) | 0.5333    | 0.6500   | 0.7445  |
 
 ## 2. Experiment Results (HatefulMemes v2)
 
@@ -73,3 +89,6 @@
 ## 2. Visualisation - Class Activation Maps
 
 https://docs.google.com/spreadsheets/d/15T45TmdODYCIYIzuluP_bdOvrpPkdT1VdSiWgLCPI0M/edit?usp=sharing
+
+## 3. Datasets
+
