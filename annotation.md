@@ -5,13 +5,15 @@ https://docs.google.com/spreadsheets/d/1sXjDrAUR22iFHIjg3UPP11_E-l3JUatTxH5OSyOi
 
 ## 2.1 Fine-Grained Category + Keywords
 
+Definition: *Physical sexual attributes or social structure or identity that one identifies with*
+
 | Category   | Keywords                                              |
 | ---------- | ----------------------------------------------------- |
 | **Male**   | "he", "man", "men", "boy", "male"                     |
 | **Female** | "she", "woman", "woman", "girl", "feminist", "female" |
 | **LGBT**   | "lgbt", "gay", 'bisexual', 'queer', 'tran*'           |
 
-## 2.1 Distribution (Manual Labeling)
+## 2.2 Distribution (Manual Labeling)
 
 | Category   | Train (train) | Validation (dev_seen) |
 | ---------- | :-----------: | :-------------------: |
@@ -30,9 +32,11 @@ https://docs.google.com/spreadsheets/d/1sXjDrAUR22iFHIjg3UPP11_E-l3JUatTxH5OSyOi
 | Precision          | 92.4%         | 75.6%                 |
 
 
-# 2. Protected Category - Race
+# 3. Protected Category - Race
 
-## 2.1 Distribution (Manual Labeling)
+## 3.1 Distribution (Manual Labeling)
+
+Definition: *Grouping of people based on shared physical qualities or common ancestral, social, cultural experience*
 
 | Category                               | Train (train) | Validation (dev_seen) |
 | -------------------------------------- | :-----------: | :-------------------: |
@@ -51,7 +55,7 @@ Middle East: Consists of Arabs, Iraqis and etc
 Asia: Chinese, Koreas
 Hispanic/Latino: Mexicans
 
-## 2.2 Fine-Grained Category + Keywords
+## 3.2 Fine-Grained Category + Keywords
 
 | Category                           | Keywords                                                |
 | ---------------------------------- | ------------------------------------------------------- |
@@ -61,7 +65,7 @@ Hispanic/Latino: Mexicans
 | Hispanic/Latino                    |                                                         |
 | Asia (East Asia + South East Asia) | brown, chinese, asia                                    |
 
-## 2.3 Pseudo-Labels
+## 3.3 Pseudo-Labels
 
 |                    | Train (train) | Validation (dev_seen) |
 | ------------------ | ------------- | --------------------- |
@@ -70,10 +74,11 @@ Hispanic/Latino: Mexicans
 | Precision          | 82.53%        | 68.57%                |
 
 
+# 4. Protected Category - Religion
 
-# 3. Protected Category - Religion
+## 4.1 Distribution (Manual Labeling)
 
-## 3.1 Distribution (Manual Labeling)
+Definition: *Followers of a religion*
 
 | Category               | Train (train) | Validation (dev_seen) |
 | ---------------------- | :-----------: | :-------------------: |
@@ -84,7 +89,7 @@ Hispanic/Latino: Mexicans
 | ???                    |       3       |           -           |
 | Total                  |      100      |           -           |
 
-## 3.2 Fine-Grained Category + Keywords
+## 4.2 Fine-Grained Category + Keywords
 
 | Category           | Keywords                                                   |
 | ------------------ | ---------------------------------------------------------- |
@@ -93,7 +98,7 @@ Hispanic/Latino: Mexicans
 | Catholic Christian | catholic, pedo*                                            |
 | Christian          |                                                            |
 
-## 3.3 Pseudo-Labels
+## 4.3 Pseudo-Labels
 
 |                    | Train (train) | Validation (dev_seen) |
 | ------------------ | ------------- | --------------------- |
@@ -101,4 +106,9 @@ Hispanic/Latino: Mexicans
 | Labelled (Correct) | 70            | -                     |
 | Precision          | 95.89%        | -                     |
 
+# 5. Total Annotations
 
+|               | Train (train) | Validation (dev_seen) |
+| ------------- | ------------- | --------------------- |
+| Labelled      | 500           | 246                   |
+| Total Hateful | 3,007         | 246                   |
