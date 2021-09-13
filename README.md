@@ -96,71 +96,76 @@ https://docs.google.com/spreadsheets/d/15T45TmdODYCIYIzuluP_bdOvrpPkdT1VdSiWgLCP
 
 ### 3.1 Dataset Distribution
 
-| **Validation** | Total Records | Hateful Records |
-| -------------- | ------------- | --------------- |
-| Overall        | 500           | 247 (0.494)     |
-| Human          | 360           | 186 (0.5167)    |
-| Non-Human      | 140           | 61 (0.4357)     |
+#### 3.1.1 Hateful Memes
 
+|            |      Hateful |  Not Hateful | Total |
+| :--------- | -----------: | -----------: | ----: |
+| Train      | 3019 (0.355) | 5481 (0.645) |  8500 |
+| Validation |  247 (0.494) |  253 (0.506) |   500 |
+| Test       |   490 (0.49) |   510 (0.51) |  1000 |
+| Total      |         3756 |         6244 | 10000 |
 
-| **Testing** | Total Records | Hateful Records |
-| ----------- | ------------- | --------------- |
-| Overall     | 1,000         | 490 (0.49)      |
-| Human       | 713           | 379 (0.5316)    |
-| Non-Human   | 287           | 111 (0.3868)    |
+| **Training** | # Records | # Hateful Records |
+| ------------ | --------- | ----------------- |
+| Human        | 6,338     | 2335 (0.3684)     |
+| Non-Human    | 2,162     | 684 (0.3164)      |
+| Overall      | 8,500     | 3,019 (0.3551)    |
 
+| **Validation** | # Records | # Hateful Records |
+| -------------- | --------- | ----------------- |
+| Human          | 360       | 186 (0.5167)      |
+| Non-Human      | 140       | 61 (0.4357)       |
+| Overall        | 500       | 247 (0.494)       |
+
+| **Validation** | # Records | # Hateful Records |
+| -------------- | --------- | ----------------- |
+| Human          | 713       | 379 (0.5316)      |
+| Non-Human      | 287       | 111 (0.3868)      |
+| Overall        | 1,000     | 490 (0.49)        |
+
+#### 3.1.2 OFF
+
+|            |     Hateful | Not Hateful | Total |
+| :--------- | ----------: | ----------: | ----: |
+| Train      |  187 (0.42) |  258 (0.58) |   445 |
+| Validation |  58 (0.389) |  91 (0.611) |   149 |
+| Test       |  58 (0.389) |  91 (0.611) |   149 |
+| Total      | 303 (0.408) | 440 (0.592) |   743 |
 
 ### 3.2 Human Gender Distribution
 
-| Visual BERT | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
-| :---------- | -------------: | -----------------: | ------------------: | ----------------------: |
-| Female      |            132 |                113 |                  87 |                     158 |
-| Male        |            193 |                163 |                 130 |                     226 |
-| Mixed       |             54 |                 58 |                  37 |                      75 |
+| **Hateful** | Ground Truth | VisualBERT | VisualBERT(COCO) | VilBERT (CC) |
+| :---------- | -----------: | ---------: | ---------------: | -----------: |
+| Female      |          132 |         87 |               71 |           66 |
+| Male        |          193 |        130 |              126 |          106 |
+| Mixed       |           54 |         37 |               30 |           31 |
 
-| Visual BERT (COCO) | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
-| :----------------- | -------------: | -----------------: | ------------------: | ----------------------: |
-| Female             |            132 |                113 |                  71 |                     174 |
-| Male               |            193 |                163 |                 126 |                     230 |
-| Mixed              |             54 |                 58 |                  30 |                      82 |
+| **Not Hateful** | Ground Truth | VisualBERT | VisualBERT(COCO) | VilBERT (CC) |
+| :-------------- | -----------: | ---------: | ---------------: | -----------: |
+| Female          |          113 |        158 |              174 |          179 |
+| Male            |          163 |        226 |              230 |          250 |
+| Mixed           |           58 |         75 |               82 |           81 |
 
-| VilBERT (CC) | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
-| :----------- | -------------: | -----------------: | ------------------: | ----------------------: |
-| Female       |            132 |                113 |                  66 |                     179 |
-| Male         |            193 |                163 |                 106 |                     250 |
-| Mixed        |             54 |                 58 |                  31 |                      81 |
+### 3.3 Human Race Distribution
 
-### 3.2 Human Race Distribution
+| **Hateful**     | Ground Truth | VisualBERT | VisualBERT(COCO) | VilBERT (CC) |
+| :-------------- | -----------: | ---------: | ---------------: | -----------: |
+| White           |          173 |        118 |              108 |
+| Mixed           |           82 |         60 |               51 |
+| Black           |           61 |         34 |               30 |
+| Middle Eastern  |           10 |          9 |                9 |
+| East Asian      |           16 |          8 |                9 |
+| Latino_Hispanic |           17 |         14 |               10 |
+| Southeast Asian |            8 |          5 |                5 |
+| Indian          |           12 |          6 |                5 |
 
-| Visual BERT     | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
-| :-------------- | -------------: | -----------------: | ------------------: | ----------------------: |
-| White           |            173 |                156 |                 118 |                     211 |
-| Mixed           |             82 |                 77 |                  60 |                      99 |
-| Black           |             61 |                 47 |                  34 |                      74 |
-| Middle Eastern  |             10 |                  8 |                   9 |                       9 |
-| East Asian      |             16 |                 16 |                   8 |                      24 |
-| Latino_Hispanic |             17 |                 21 |                  14 |                      24 |
-| Southeast Asian |              8 |                  5 |                   5 |                       8 |
-| Indian          |             12 |                  4 |                   6 |                      10 |
-
-| Visual BERT (COCO) | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
-| :----------------- | -------------: | -----------------: | ------------------: | ----------------------: |
-| White              |            173 |                156 |                 108 |                     221 |
-| Mixed              |             82 |                 77 |                  51 |                     108 |
-| Black              |             61 |                 47 |                  30 |                      78 |
-| Middle Eastern     |             10 |                  8 |                   9 |                       9 |
-| East Asian         |             16 |                 16 |                   9 |                      23 |
-| Latino_Hispanic    |             17 |                 21 |                  10 |                      28 |
-| Southeast Asian    |              8 |                  5 |                   5 |                       8 |
-| Indian             |             12 |                  4 |                   5 |                      11 |
-
-| VilBERT (CC)    | Hateful (True) | Not Hateful (True) | Hateful (Predicted) | Not Hateful (Predicted) |
-| :-------------- | -------------: | -----------------: | ------------------: | ----------------------: |
-| White           |            173 |                156 |                 108 |                     221 |
-| Mixed           |             82 |                 77 |                  51 |                     108 |
-| Black           |             61 |                 47 |                  30 |                      78 |
-| Middle Eastern  |             10 |                  8 |                   9 |                       9 |
-| East Asian      |             16 |                 16 |                   9 |                      23 |
-| Latino_Hispanic |             17 |                 21 |                  10 |                      28 |
-| Southeast Asian |              8 |                  5 |                   5 |                       8 |
-| Indian          |             12 |                  4 |                   5 |                      11 |
+| **Not Hateful** | Ground Truth | VisualBERT | VisualBERT(COCO) | VilBERT (CC) |
+| :-------------- | -----------: | ---------: | ---------------: | -----------: |
+| White           |          156 |        211 |              221 |
+| Mixed           |           77 |         99 |              108 |
+| Black           |           47 |         74 |               78 |
+| Middle Eastern  |            8 |          9 |                9 |
+| East Asian      |           16 |         24 |               23 |
+| Latino_Hispanic |           21 |         24 |               28 |
+| Southeast Asian |            5 |          8 |                8 |
+| Indian          |            4 |         10 |               11 |
