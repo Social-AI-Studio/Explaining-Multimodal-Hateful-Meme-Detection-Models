@@ -35,19 +35,29 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.user = require("../models/user.model.js")(sequelize, Sequelize);
-db.role = require("../models/role.model.js")(sequelize, Sequelize);
+// Load assocation models
+db.annotation = require("./annotation.model.js")(sequelize, Sequelize);
+
+// Load table models
+db.user = require("./user.model.js")(sequelize, Sequelize);
+db.role = require("./role.model.js")(sequelize, Sequelize);
+db.meme = require("./meme.model.js")(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",
   foreignKey: "roleId",
   otherKey: "userId"
 });
+
 db.user.belongsToMany(db.role, {
   through: "user_roles",
   foreignKey: "userId",
   otherKey: "roleId"
 });
+
+db.annotation.belongsTo(db.meme);
+db.annotation.belongsTo(db.user);
+
 
 db.ROLES = ["user", "admin", "moderator"];
 

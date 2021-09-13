@@ -21,15 +21,7 @@ const db = require("./models");
 const User = db.user;
 const Role = db.role;
 
-// force: true will drop the table if it already exists
-const {init_users, init_roles} = require("./init.js")
-db.sequelize.sync({ force: true }).then(() => {
-	console.log('Drop and Resync Database with { force: true }');
-	init_roles(Role);
-	init_users(User);
-});
-
-// db.sequelize.sync();
+db.sequelize.sync();
 
 // simple route
 app.get("/", (req, res) => {
@@ -39,6 +31,7 @@ app.get("/", (req, res) => {
 // routes
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
+require('./routes/meme.routes')(app);
 
 // set port, listen for requests
 const HOST = process.env.HOST || '0.0.0.0'
