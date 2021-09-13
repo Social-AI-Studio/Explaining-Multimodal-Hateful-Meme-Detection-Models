@@ -1,7 +1,7 @@
 #!/bin/bash
-CUDA_VISIBLE_DEVICES=0 python visualisation/image/main.py model=late_fusion \
-    dataset=hateful_memes \
-    config=config/visualisation/late_fusion.yaml \
+mmf_predict dataset=hateful_memes \
+    model=late_fusion \
+    config=projects/hateful_memes/configs/late_fusion/defaults.yaml \
     checkpoint.resume_file=models/late_fusion/late_fusion_final.pth \
     checkpoint.resume_pretrained=False \
     dataset_config.hateful_memes.annotations.train[0]=hateful_memes/defaults/annotations/cleaned_train.jsonl \
