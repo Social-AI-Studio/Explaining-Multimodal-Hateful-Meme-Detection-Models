@@ -1,6 +1,5 @@
 includes:
 - configs/datasets/hateful_memes/bert.yaml
-- ./image_preprocessors.yaml
 
 model_config:
   concat_bert:

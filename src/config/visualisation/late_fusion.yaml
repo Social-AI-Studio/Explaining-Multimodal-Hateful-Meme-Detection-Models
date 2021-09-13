@@ -1,8 +1,17 @@
 includes:
-- ./bert.yaml
+- configs/datasets/hateful_memes/bert.yaml
+- ./image_preprocessors.yaml
 
 model_config:
   late_fusion:
+    text_encoder:
+      type: transformer
+      params:
+        hidden_size: 768
+        num_hidden_layers: 12
+        num_attention_heads: 12
+        output_attentions: true
+        output_hidden_states: false
     modal_classifier:
       type: mlp
       params:

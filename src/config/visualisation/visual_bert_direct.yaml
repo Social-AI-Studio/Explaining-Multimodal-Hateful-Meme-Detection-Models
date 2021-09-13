@@ -1,0 +1,5 @@
+includes:
+- ./visual_bert.yaml
+
+training:
+  batch_size: 128
