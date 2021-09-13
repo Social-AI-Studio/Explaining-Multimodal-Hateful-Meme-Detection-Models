@@ -1,0 +1,66 @@
+dataset_config:
+  off:
+    data_dir: ${env.data_dir}/datasets
+    depth_first: false
+    fast_read: false
+    use_images: true
+    use_features: false
+    images:
+      train:
+      - off/defaults/images/
+      val:
+      - off/defaults/images/
+      test:
+      - off/defaults/images/
+    features:
+      train:
+      - off/defaults/features/detectron.lmdb
+      val:
+      - off/defaults/features/detectron.lmdb
+      test:
+      - off/defaults/features/detectron.lmdb
+    annotations:
+      train:
+      - off/defaults/annotations/train.jsonl
+      val:
+      - off/defaults/annotations/dev_unseen.jsonl
+      test:
+      - off/defaults/annotations/test_unseen.jsonl
+    max_features: 100
+    processors:
+      text_processor:
+        type: vocab
+        params:
+          max_length: 14
+          vocab:
+            type: intersected
+            embedding_name: glove.6B.300d
+            vocab_file: off/defaults/extras/vocabs/vocabulary_100k.txt
+          preprocessor:
+            type: simple_sentence
+            params: {}
+      bbox_processor:
+        type: bbox
+        params:
+          max_length: 50
+      image_processor:
+        type: torchvision_transforms
+        params:
+          transforms:
+            - type: Resize
+              params:
+                size: [256, 256]
+            - type: CenterCrop
+              params:
+                size: [224, 224]
+            - ToTensor
+            - GrayScaleTo3Channels
+            - type: Normalize
+              params:
+                mean: [0.46777044, 0.44531429, 0.40661017]
+                std: [0.12221994, 0.12145835, 0.14380469]
+    return_features_info: false
+
+
+evaluation:
+  predict_file_format: csv
