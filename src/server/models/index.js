@@ -60,7 +60,7 @@ db.user.belongsToMany(db.role, {
 db.annotation.belongsTo(db.meme);
 db.annotation.belongsTo(db.user);
 
-db.category.hasOne(db.subcategory)
+db.subcategory.belongsTo(db.category)
 
 db.ROLES = ["user", "admin", "moderator"];
 

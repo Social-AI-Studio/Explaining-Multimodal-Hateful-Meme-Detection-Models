@@ -36,11 +36,12 @@ exports.getAnnotations = (req, res) => {
             }
         })
     }).then(annotations => {
-        var test = []
         for (let index = 0; index < annotations.length; index++) {
-            results[index].dataValues.computer_labels = annotations[index].label;
-            test.push(annotations[index].label)
+            results[index].dataValues.labels = results[index].dataValues.labels.split(",");
+            results[index].dataValues.computer_labels = annotations[index].labels.split(",");
         }
+
+        console.log(results[0])
 
         res.status(200).send(results);
     }).catch(err => {

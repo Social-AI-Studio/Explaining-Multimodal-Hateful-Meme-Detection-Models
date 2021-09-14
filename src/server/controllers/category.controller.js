@@ -3,10 +3,11 @@ const Category = db.category;
 const Subcategory = db.subcategory;
 
 exports.getCategories = (req, res) => {
-    Category.findAll({ include: [Subcategory] }).then(results => {
+    Subcategory.findAll({ include: [Category] }).then(results => {
         var categories = []
+        console.log(results)
         results.forEach(element => {
-            categories.push(`[${element.name}] ${element.subcategory.name}`)
+            categories.push(`[${element.category.name}] ${element.name}`)
         });
 
         // Filter categories
