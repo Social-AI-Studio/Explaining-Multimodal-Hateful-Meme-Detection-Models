@@ -79,7 +79,6 @@ export default {
       this.loading = false;
       this.rows = res.data.count;
       this.annotationList = res.data.rows;
-      console.log(this.rows)
     },
   },
 };
