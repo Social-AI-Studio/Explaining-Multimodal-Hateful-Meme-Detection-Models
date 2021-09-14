@@ -96,6 +96,30 @@ function init_annotations(user, Annotation) {
 	}
 }
 
+async function init_category(Category, Subcategory) {
+	var categories = {
+		"Sex": ["Male", "Female", "LGBT"],
+		"Race": ["Black", "White", "Middle East", "Hispanic/Latino", "American Indian", "Asia"],
+		"Religion": ["Muslim", "Jew", "Catholic Christian", "Christian"],
+		"Nationality": ["Mexican"],
+		"Disability": ["Down Syndrome", "Intellectual Disability"]
+	}
+
+	for (const [key, valueList] of Object.entries(categories)) {
+		Category.create({
+			name: key
+		}).then(category => {
+			valueList.forEach(element => {
+				Subcategory.create({
+					categoryId: category.id,
+					name: element
+				})
+			});
+		})
+	}
+
+}
+
 const { user } = require("./models");
 // database
 const db = require("./models");
@@ -103,6 +127,9 @@ const User = db.user;
 const Role = db.role;
 const Meme = db.meme;
 const Annotation = db.annotation;
+
+const Category = db.category;
+const Subcategory = db.subcategory;
 
 // force: true will drop the table if it already exists
 // const {init_users, init_roles} = require("./init.js")
@@ -122,6 +149,8 @@ db.sequelize.sync({ force: true }).then(() => {
 	User.findOne({ where: { username: 'urop_gargi' } }).then(user => {
 		init_annotations(user, Annotation);
 	})
+
+	init_category(Category, Subcategory)
 });
 
 

@@ -42,6 +42,8 @@ db.annotation = require("./annotation.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
 db.role = require("./role.model.js")(sequelize, Sequelize);
 db.meme = require("./meme.model.js")(sequelize, Sequelize);
+db.category = require("./category.model.js")(sequelize, Sequelize);
+db.subcategory = require("./subcategory.model.js")(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",
@@ -58,6 +60,7 @@ db.user.belongsToMany(db.role, {
 db.annotation.belongsTo(db.meme);
 db.annotation.belongsTo(db.user);
 
+db.category.hasOne(db.subcategory)
 
 db.ROLES = ["user", "admin", "moderator"];
 

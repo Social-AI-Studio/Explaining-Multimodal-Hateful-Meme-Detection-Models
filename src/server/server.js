@@ -32,6 +32,7 @@ app.get("/", (req, res) => {
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/meme.routes')(app);
+require('./routes/category.routes')(app);
 
 // set port, listen for requests
 const HOST = process.env.HOST || '0.0.0.0'
