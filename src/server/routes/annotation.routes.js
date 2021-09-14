@@ -15,4 +15,10 @@ module.exports = function(app) {
     [authJwt.verifyToken],
     controller.getAnnotations
   );
+
+  app.post(
+    "/api/memes/annotation",
+    [authJwt.verifyToken],
+    controller.saveAnnotation
+  );
 };
