@@ -6,7 +6,7 @@ const Op = db.Sequelize.Op;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-exports.getMemes = (req, res) => {
+exports.getAnnotations = (req, res) => {
     var results = {}
     Annotation.findAll({
         where: {

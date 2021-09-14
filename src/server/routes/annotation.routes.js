@@ -1,5 +1,5 @@
 const { authJwt } = require("../middleware");
-const controller = require("../controllers/meme.controller");
+const controller = require("../controllers/annotation.controller");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -11,8 +11,8 @@ module.exports = function(app) {
   });
 
   app.get(
-    "/api/memes",
+    "/api/memes/annotations",
     [authJwt.verifyToken],
-    controller.getMemes
+    controller.getAnnotations
   );
 };
