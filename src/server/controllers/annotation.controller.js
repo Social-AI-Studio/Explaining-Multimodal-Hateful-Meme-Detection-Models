@@ -8,7 +8,7 @@ var bcrypt = require("bcryptjs");
 
 exports.getAnnotations = (req, res) => {
     var results = {}
-    Annotation.findAll({
+    Annotation.findAndCountAll({
         where: {
             userId: req.userId,
         },
@@ -25,7 +25,7 @@ exports.getAnnotations = (req, res) => {
         results = annotations
 
         var memeIds = []
-        results.forEach(element => {
+        results.rows.forEach(element => {
             memeIds.push(element.memeId)
         });
 
@@ -37,11 +37,9 @@ exports.getAnnotations = (req, res) => {
         })
     }).then(annotations => {
         for (let index = 0; index < annotations.length; index++) {
-            results[index].dataValues.labels = results[index].dataValues.labels.split(",");
-            results[index].dataValues.computer_labels = annotations[index].labels.split(",");
+            results.rows[index].dataValues.labels = results.rows[index].dataValues.labels.split(",");
+            results.rows[index].dataValues.computer_labels = annotations[index].labels.split(",");
         }
-
-        console.log(results[0])
 
         res.status(200).send(results);
     }).catch(err => {
