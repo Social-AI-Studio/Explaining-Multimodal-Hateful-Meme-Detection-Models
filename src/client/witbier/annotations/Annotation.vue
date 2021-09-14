@@ -19,7 +19,7 @@
         v-model="currentPage"
         :total-rows="rows"
         align="center"
-        per-page=9
+        per-page="9"
         hide-goto-end-buttons
         last-number
       ></b-pagination>
@@ -31,6 +31,7 @@
 import { Settings } from "../config/api.config";
 import Meme from "./Meme.vue";
 import axios from "axios";
+import auth from "../authentication/auth"
 
 export default {
   components: {
@@ -67,8 +68,7 @@ export default {
           `http://${Settings.HOST}:${Settings.PORT}/api/memes/annotations?offset=${offset}&limit=${this.limit}`,
           {
             headers: {
-              "x-access-token":
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjMxNjA5MzU0LCJleHAiOjE2MzE2OTU3NTR9.k6pE6n8OfReqIXIfE4Zu301as9X6V6d2r6DbfMypr-E",
+              "x-access-token": auth.getToken()
             },
           }
         )
