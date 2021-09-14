@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 
 var corsOptions = {
-	origin: "http://localhost:8081"
+	origin: "http://localhost:8001"
 };
 
 app.use(cors(corsOptions));
@@ -33,6 +33,8 @@ require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/annotation.routes')(app);
 require('./routes/category.routes')(app);
+
+app.use('/img', express.static(__dirname + '/dataset/img'))
 
 // set port, listen for requests
 const HOST = process.env.HOST || '0.0.0.0'
