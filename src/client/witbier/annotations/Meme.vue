@@ -67,7 +67,11 @@
       >
         {{ option }}
       </b-dropdown-item-button>
-      <b-button href="#" variant="primary">Save</b-button>
+      <div style="text-align: center">
+        <b-button variant="primary" @click="onSaveButton()"
+          >Save {{ saveTime }}
+        </b-button>
+      </div>
     </b-card>
   </div>
 </template>
@@ -75,6 +79,8 @@
 <script>
 import { Settings } from "../config/api.config";
 import axios from "axios";
+import moment from "moment-timezone";
+import auth from "../authentication/auth";
 
 export default {
   name: "meme",
@@ -108,6 +114,8 @@ export default {
       availableOptions: [],
 
       labels: this.annotation.labels,
+      createdAt: moment(this.annotation.createdAt).tz('Asia/Singapore'),
+      updatedAt: moment(this.annotation.updatedAt).tz('Asia/Singapore'),
     };
   },
   watch: {
@@ -115,26 +123,6 @@ export default {
       const criteria = val.trim().toLowerCase();
 
       if (criteria) {
-        // axios
-        //   .get(
-        //     `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?search=${criteria}`,
-        //     {
-        //       headers: {
-        //         "x-access-token":
-        //           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjMxNjA5MzU0LCJleHAiOjE2MzE2OTU3NTR9.k6pE6n8OfReqIXIfE4Zu301as9X6V6d2r6DbfMypr-E",
-        //       },
-        //     }
-        //   )
-        //   .then((res) => {
-        //     console.log(res)
-        //     var options = res.data
-        //     options.push(`Create new label: ${criteria}`);
-        //     console.log(options)
-        //     this.availableOptions = options
-        //   })
-        //   .catch((err) => {
-        //     this.availableOptions = [err];
-        //   });
         const res = await axios.get(
           `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?search=${criteria}`,
           {
@@ -145,7 +133,6 @@ export default {
           }
         );
 
-        // console.log(res);
         var options = res.data;
         options.push(`Create new label: ${criteria}`);
         this.availableOptions = options;
@@ -156,63 +143,53 @@ export default {
     },
   },
   computed: {
-    // criteria() {
-    //   // Compute the search criteria
-    //   return this.search.trim().toLowerCase();
-    // },
-    // async availableOptions() {
-    //   const criteria = this.criteria;
-    //   if (criteria) {
-    //     // axios
-    //     //   .get(
-    //     //     `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?search=${criteria}`,
-    //     //     {
-    //     //       headers: {
-    //     //         "x-access-token":
-    //     //           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjMxNjA5MzU0LCJleHAiOjE2MzE2OTU3NTR9.k6pE6n8OfReqIXIfE4Zu301as9X6V6d2r6DbfMypr-E",
-    //     //       },
-    //     //     }
-    //     //   )
-    //     //   .then((res) => {
-    //     //     console.log(res)
-    //     //     var options = res.data
-    //     //     options.push(`Create new label: ${criteria}`);
-    //     //     console.log(options)
-    //     //     return options
-    //     //   })
-    //     //   .catch((err) => {
-    //     //     return [err];
-    //     //   });
-    //     const res = await axios.get(
-    //       `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?search=${criteria}`,
-    //       {
-    //         headers: {
-    //           "x-access-token":
-    //             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjMxNjA5MzU0LCJleHAiOjE2MzE2OTU3NTR9.k6pE6n8OfReqIXIfE4Zu301as9X6V6d2r6DbfMypr-E",
-    //         },
-    //       }
-    //     );
-    //     console.log(res);
-    //     var options = res.data;
-    //     options.push(`Create new label: ${criteria}`);
-    //     console.log(options);
-    //     return ['abc'];
-    //   }
-    //   // Show all options available
-    //   return [criteria];
-    // },
-    // searchDesc() {
-    //   if (this.criteria && this.availableOptions.length === 0) {
-    //     return "There are no tags matching your search criteria";
-    //   }
-    //   return "";
-    // },
-  },
+    saveTime: function () {
+      if (this.createdAt != this.updatedAt) {
+        console.log(this.updatedAt)
+        console.log(moment())
+        if (this.updatedAt.isSame(moment(), "day")) {
+          return `(${this.updatedAt.startOf("day").fromNow()})`;
+        } else {
+          return `(${this.updatedAt.format("DD/MM h:mm:ss A")})`;
+        }
+      }
 
+      return "(Unsaved)";
+    },
+  },
   methods: {
     onOptionClick({ option, addTag }) {
       addTag(option);
       this.search = "";
+    },
+    async onSaveButton() {
+      const body = new URLSearchParams({
+        memeId: this.annotation.id,
+        labels: this.labels.join(","),
+      });
+
+      console.log(body)
+
+      const config = {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "x-access-token": auth.getToken(),
+        },
+      };
+
+      const res = await axios
+        .post(
+          `http://${Settings.HOST}:${Settings.PORT}/api/memes/annotation`,
+          body.toString(),
+          config
+        )
+        .catch((error) => {
+          console.log(error);
+        });
+
+      if (res) {
+        this.updatedAt = moment().tz('Asia/Singapore')
+      }
     },
     addTag(option) {
       if (!this.labels.includes(option)) {
