@@ -48,14 +48,17 @@ exports.getAnnotations = (req, res) => {
 };
 
 exports.saveAnnotation = (req, res) => {
-    Annotation.update({ labels: req.body.labels}, {
+    Annotation.update({
+        labels: req.body.labels,
+        components: req.body.components
+    }, {
         where: {
             id: req.body.memeId,
             userId: req.userId
         }
     }).then(result => {
         if (result == 1)
-            res.status(200).send({ message: `Annotation ${req.body.memeId} updated`});
+            res.status(200).send({ message: `Annotation ${req.body.memeId} updated` });
         else
             res.status(500).send({ message: `Annotation ${req.body.memeId} not found` });
     }).catch(err => {
