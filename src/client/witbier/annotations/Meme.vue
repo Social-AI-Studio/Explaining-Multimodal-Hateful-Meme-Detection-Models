@@ -44,7 +44,7 @@
       <b-input-group>
         <template #prepend>
           <b-form-select
-            id="sb-locales"
+            id="category-select"
             v-model="currentCategory"
             :options="availableCategories"
           ></b-form-select>
@@ -71,6 +71,28 @@
         </b-dropdown-item-button>
       </div>
 
+      <p style="padding: 0; margin-top: 0.5rem; margin-bottom: 0">
+        <b>Hateful Components:</b>
+      </p>
+
+      <b-form-select
+        id="component-select"
+        v-model="components"
+        :options="availableComponents"
+      ></b-form-select>
+
+      <div
+        v-if="components == null"
+        tabindex="-1"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        class="d-block invalid-feedback"
+        id="__BVID__41__BV_feedback_invalid_"
+      >
+        component is required
+      </div>
+
       <div class="mt-2" style="text-align: center">
         <b-button variant="primary" @click="onSaveButton()"
           >Save {{ saveTime }}
@@ -92,7 +114,17 @@
           v-model="createCategory"
           :options="availableCategories"
         ></b-form-select>
-        <div v-if="!createCategoryState" tabindex="-1" role="alert" aria-live="assertive" aria-atomic="true" class="d-block invalid-feedback" id="__BVID__41__BV_feedback_invalid_">category is required</div>
+        <div
+          v-if="!createCategoryState"
+          tabindex="-1"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          class="d-block invalid-feedback"
+          id="__BVID__41__BV_feedback_invalid_"
+        >
+          category is required
+        </div>
 
         <b-form-group
           class="mt-2"
@@ -125,27 +157,6 @@ export default {
   data() {
     return {
       error: null,
-      tags: [],
-
-      options: [
-        "[Gender] Male",
-        "[Gender] Female",
-        "[Gender] LGBT",
-        "[Race] Black",
-        "[Race] White",
-        "[Race] Middle East",
-        "[Race] Hispanic/Latino",
-        "[Race] Asia (East Asia + South East Asia)",
-        "[Religion] Muslim",
-        "[Religion] Jews",
-        "[Religion] Catholic Christian",
-        "[Religion] Christian",
-        "[Nationality] Mexican",
-        "[Disability] Down Syndrome",
-        "[Disability] Intellectual Disability",
-        "[Disability] Autism",
-        "[Disability] Dwarfism",
-      ],
       search: "",
       category: "All",
 
@@ -167,8 +178,16 @@ export default {
         { value: "Nationality", text: "Nationality" },
         { value: "Disability", text: "Disability" },
       ],
+      availableComponents: [
+        { value: null, text: "Choose an option" },
+        { value: "None", text: "Neither Components" },
+        { value: "Text", text: "Text Component" },
+        { value: "Image", text: "Image Components" },
+        { value: "Text + Image", text: "Both Components" },
+      ],
 
       labels: this.annotation.labels,
+      components: this.annotation.components,
       createdAt: moment(this.annotation.createdAt).tz("Asia/Singapore"),
       updatedAt: moment(this.annotation.updatedAt).tz("Asia/Singapore"),
     };
@@ -207,9 +226,12 @@ export default {
       this.search = "";
     },
     async onSaveButton() {
+      if (this.components == null) return;
+
       const body = new URLSearchParams({
         memeId: this.annotation.id,
         labels: this.labels.join(","),
+        components: this.components
       });
 
       const config = {
@@ -244,8 +266,7 @@ export default {
 
         var options = res.data;
 
-        if (criteria)
-          options.push(`Create new label: ${criteria}`);
+        if (criteria) options.push(`Create new label: ${criteria}`);
 
         this.availableOptions = options;
       } else {
@@ -275,7 +296,7 @@ export default {
       this.$bvModal.show("creation-modal");
     },
     checkFormValidity() {
-      const categoryValid = this.createCategory != null
+      const categoryValid = this.createCategory != null;
       const subcategoryValid = this.$refs.form.checkValidity();
       this.createSubcategoryState = subcategoryValid;
 
@@ -285,9 +306,7 @@ export default {
     },
     resetModal() {
       this.createCategory = null;
-      this.createCategoryState = null,
-
-      this.createSubcategory = "";
+      (this.createCategoryState = null), (this.createSubcategory = "");
       this.createSubcategoryState = null;
     },
     handleOk(bvModalEvt) {
@@ -325,7 +344,7 @@ export default {
         });
 
       if (res) {
-        this.addTag(`[${this.createCategory}] ${this.createSubcategory}`)
+        this.addTag(`[${this.createCategory}] ${this.createSubcategory}`);
       }
 
       // Push the name to submitted names
