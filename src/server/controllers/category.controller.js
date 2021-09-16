@@ -3,7 +3,17 @@ const Category = db.category;
 const Subcategory = db.subcategory;
 
 exports.getCategories = (req, res) => {
-    Subcategory.findAll({ include: [Category] }).then(results => {
+    var searchOpts = {
+        include: [Category]
+    }
+
+    if (req.query.category != 'All') {
+        searchOpts['where'] = {
+            '$category.name$': req.query.category
+        }
+    }
+
+    Subcategory.findAll(searchOpts).then(results => {
         var categories = []
         console.log(results)
         results.forEach(element => {
@@ -28,7 +38,7 @@ exports.createCategory = (req, res) => {
             name: req.body.subcategory
         })
     }).then(category => {
-        res.status(200).send({"message": "Category saved"})
+        res.status(200).send({ "message": "Category saved" })
     }).catch(err => {
         res.status(500).send({ message: err.message });
     })
