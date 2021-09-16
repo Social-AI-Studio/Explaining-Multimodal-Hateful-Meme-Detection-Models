@@ -30,9 +30,15 @@ exports.getCategories = (req, res) => {
 };
 
 exports.createCategory = (req, res) => {
+    console.log(req.body.category)
     Category.findOne({
-        name: req.body.category
+        where: {
+            name: req.body.category
+        }
     }).then(category => {
+        console.log(category)
+        console.log(category.id)
+        console.log(category.name)
         return Subcategory.create({
             categoryId: category.id,
             name: req.body.subcategory
