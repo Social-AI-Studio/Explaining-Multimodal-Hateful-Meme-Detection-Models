@@ -41,15 +41,16 @@
         </li>
       </ul>
 
-      <b-input-group class="mb-2">
+      <b-input-group>
         <template #prepend>
           <b-dropdown text="All" variant="success">
-            <b-dropdown-item>All</b-dropdown-item>
-            <b-dropdown-item>Gender</b-dropdown-item>
-            <b-dropdown-item>Race</b-dropdown-item>
-            <b-dropdown-item>Religion</b-dropdown-item>
-            <b-dropdown-item>Nationality</b-dropdown-item>
-            <b-dropdown-item>Disability</b-dropdown-item>
+            <b-dropdown-item
+              v-for="category in availableCategories"
+              :key="category"
+              @click="onCategoryClick({ category })"
+            >
+              {{ category }}
+            </b-dropdown-item>
           </b-dropdown>
         </template>
         <b-form-input
@@ -60,14 +61,18 @@
         ></b-form-input>
       </b-input-group>
 
-      <b-dropdown-item-button
-        v-for="option in availableOptions"
-        :key="option"
-        @click="onOptionClick({ option, addTag })"
-      >
-        {{ option }}
-      </b-dropdown-item-button>
-      <div style="text-align: center">
+      <div v-if="availableOptions.length > 0" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+        <b-dropdown-item-button
+          v-for="option in availableOptions"
+          :key="option"
+          style="list-style:none;"
+          @click="onOptionClick({ option, addTag })"
+        >
+          {{ option }}
+        </b-dropdown-item-button>
+      </div>
+
+      <div class="mt-2" style="text-align: center">
         <b-button variant="primary" @click="onSaveButton()"
           >Save {{ saveTime }}
         </b-button>
@@ -110,8 +115,14 @@ export default {
         "[Disability] Dwarfism",
       ],
       search: "",
+      category: "All",
+
+      currentSearch: "",
+      currentCategory: "All",
       searchDesc: "",
+      
       availableOptions: [],
+      availableCategories: ["All", "Gender", "Race", "Religion", "Nationality", "Disability"],
 
       labels: this.annotation.labels,
       createdAt: moment(this.annotation.createdAt).tz("Asia/Singapore"),
@@ -120,24 +131,13 @@ export default {
   },
   watch: {
     search: async function (val, oldVal) {
-      const criteria = val.trim().toLowerCase();
-
-      if (criteria) {
-        const res = await axios.get(
-          `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?search=${criteria}`,
-          {
-            headers: { "x-access-token": auth.getToken() },
-          }
-        );
-
-        var options = res.data;
-        options.push(`Create new label: ${criteria}`);
-        this.availableOptions = options;
-      } else {
-        // Show all options available
-        this.availableOptions = [];
-      }
+      this.currentSearch = val.trim().toLowerCase();
+      this.getAvailableOptions(this.currentCategory, this.currentSearch)
     },
+    category: async function (val, oldVal) {
+      this.currentCategory = val.category;
+      this.getAvailableOptions(this.currentCategory, this.currentSearch)
+    }
   },
   computed: {
     saveTime: function () {
@@ -159,13 +159,14 @@ export default {
       addTag(option);
       this.search = "";
     },
+    onCategoryClick(category) {
+      this.category = category;
+    },
     async onSaveButton() {
       const body = new URLSearchParams({
         memeId: this.annotation.id,
         labels: this.labels.join(","),
       });
-
-      console.log(body);
 
       const config = {
         headers: {
@@ -188,7 +189,26 @@ export default {
         this.updatedAt = moment().tz("Asia/Singapore");
       }
     },
+    async getAvailableOptions(category, criteria) {
+      if (criteria || category != 'All') {
+        console.log(`http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`)
+        const res = await axios.get(
+          `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`,
+          {
+            headers: { "x-access-token": auth.getToken() },
+          }
+        );
+
+        var options = res.data;
+        options.push(`Create new label: ${criteria}`);
+        this.availableOptions = options;
+      } else {
+        // Show all options available
+        this.availableOptions = [];
+      }
+    },
     addTag(option) {
+      this.category = "All";
       if (!this.labels.includes(option)) {
         this.labels.push(option);
       }
