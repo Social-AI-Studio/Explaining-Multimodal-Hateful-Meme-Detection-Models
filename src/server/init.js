@@ -98,7 +98,7 @@ function init_annotations(user, Annotation) {
 
 async function init_category(Category, Subcategory) {
 	var categories = {
-		"Sex": ["Male", "Female", "LGBT"],
+		"Gender": ["Male", "Female", "LGBT"],
 		"Race": ["Black", "White", "Middle East", "Hispanic/Latino", "American Indian", "Asia"],
 		"Religion": ["Muslim", "Jew", "Catholic Christian", "Christian"],
 		"Nationality": ["Mexican"],
