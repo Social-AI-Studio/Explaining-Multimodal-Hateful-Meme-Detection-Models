@@ -2,18 +2,15 @@
   <div class="annotation">
     <b-card :img-src="annotation.meme.image" img-top tag="article" class="mb-2">
       <p style="margin: 0; padding: 0">
-        <b
-          >Add. Information <br />
-          (Obtained via Google Vision API)</b
-        >
-      </p>
-
-      <p style="margin: 0; padding: 0">
-        <i>best guess label: </i>{{ annotation.meme.best_guess_labels }}
+        <b>Best Guess Labels:</b> <br />
+        {{ annotation.meme.best_guess_labels }}
       </p>
       <br />
 
-      <p><i>entities: </i>{{ annotation.meme.entities }}</p>
+      <p style="margin: 0; padding: 0"><b>Computer Labels:</b></p>
+      <ul>
+        <li v-for="entity in annotation.meme.entities.split(',')" :key="entity">{{entity}}</li>
+      </ul>
 
       <p style="margin: 0; padding: 0"><b>Computer Labels:</b></p>
       <ul
@@ -25,7 +22,7 @@
           :key="label"
           class="list-inline-item"
         >
-          <b-form-tag :title="label" variant="info">{{ label }}</b-form-tag>
+          <b-form-tag :title="label" variant="light">{{ label }}</b-form-tag>
         </li>
       </ul>
 
@@ -94,7 +91,10 @@
       </div>
 
       <div class="mt-2" style="text-align: center">
-        <b-button variant="primary" @click="onSaveButton()"
+        <b-button variant="info" v-if="saveTime != '(Unsaved)'" @click="onSaveButton()"
+          >Save {{ saveTime }}
+        </b-button>
+        <b-button variant="warning" v-if="saveTime == '(Unsaved)'" @click="onSaveButton()"
           >Save {{ saveTime }}
         </b-button>
       </div>
@@ -203,7 +203,7 @@ export default {
   },
   computed: {
     saveTime: function () {
-      if (this.createdAt != this.updatedAt) {
+      if (!this.createdAt.isSame(this.updatedAt)) {
         var currentTime = moment();
         if (this.updatedAt.isSame(currentTime, "day")) {
           var duration = moment.duration(currentTime.diff(this.updatedAt));
@@ -231,7 +231,7 @@ export default {
       const body = new URLSearchParams({
         memeId: this.annotation.id,
         labels: this.labels.join(","),
-        components: this.components
+        components: this.components,
       });
 
       const config = {
