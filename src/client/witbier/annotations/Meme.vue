@@ -43,15 +43,11 @@
 
       <b-input-group>
         <template #prepend>
-          <b-dropdown text="All" variant="success">
-            <b-dropdown-item
-              v-for="category in availableCategories"
-              :key="category"
-              @click="onCategoryClick({ category })"
-            >
-              {{ category }}
-            </b-dropdown-item>
-          </b-dropdown>
+          <b-form-select
+            id="sb-locales"
+            v-model="currentCategory"
+            :options="availableCategories"
+          ></b-form-select>
         </template>
         <b-form-input
           v-model="search"
@@ -94,7 +90,7 @@
         <b-form-select
           id="sb-locales"
           v-model="createCategory"
-          :options="availableCategoriesOptions"
+          :options="availableCategories"
         ></b-form-select>
         <div v-if="!createCategoryState" tabindex="-1" role="alert" aria-live="assertive" aria-atomic="true" class="d-block invalid-feedback" id="__BVID__41__BV_feedback_invalid_">category is required</div>
 
@@ -164,15 +160,6 @@ export default {
 
       availableOptions: [],
       availableCategories: [
-        "All",
-        "Gender",
-        "Race",
-        "Religion",
-        "Nationality",
-        "Disability",
-      ],
-
-      availableCategoriesOptions: [
         { value: null, text: "None" },
         { value: "Gender", text: "Gender" },
         { value: "Race", text: "Race" },
@@ -191,8 +178,7 @@ export default {
       this.currentSearch = val.trim().toLowerCase();
       this.getAvailableOptions(this.currentCategory, this.currentSearch);
     },
-    category: async function (val, oldVal) {
-      this.currentCategory = val.category;
+    currentCategory: async function (val, oldVal) {
       this.getAvailableOptions(this.currentCategory, this.currentSearch);
     },
   },
@@ -219,9 +205,6 @@ export default {
     onOptionClick({ option, addTag }) {
       addTag(option);
       this.search = "";
-    },
-    onCategoryClick(category) {
-      this.category = category;
     },
     async onSaveButton() {
       const body = new URLSearchParams({
@@ -251,7 +234,7 @@ export default {
       }
     },
     async getAvailableOptions(category, criteria) {
-      if (criteria || category != "All") {
+      if (criteria || category) {
         const res = await axios.get(
           `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`,
           {
@@ -260,7 +243,10 @@ export default {
         );
 
         var options = res.data;
-        options.push(`Create new label: ${criteria}`);
+
+        if (criteria)
+          options.push(`Create new label: ${criteria}`);
+
         this.availableOptions = options;
       } else {
         // Show all options available
@@ -274,7 +260,7 @@ export default {
         return;
       }
 
-      this.category = "All";
+      this.currentCategory = null;
 
       // Check for duplicates
       if (!this.labels.includes(option)) {
