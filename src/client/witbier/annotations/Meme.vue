@@ -61,11 +61,14 @@
         ></b-form-input>
       </b-input-group>
 
-      <div v-if="availableOptions.length > 0" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+      <div
+        v-if="availableOptions.length > 0"
+        style="border: 1px solid rgba(0, 0, 0, 0.125)"
+      >
         <b-dropdown-item-button
           v-for="option in availableOptions"
           :key="option"
-          style="list-style:none;"
+          style="list-style: none"
           @click="onOptionClick({ option, addTag })"
         >
           {{ option }}
@@ -78,6 +81,39 @@
         </b-button>
       </div>
     </b-card>
+
+    <b-modal
+      id="creation-modal"
+      ref="modal"
+      title="Create New Subcategory"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+        <label for="sb-locales">Category</label>
+        <b-form-select
+          id="sb-locales"
+          v-model="createCategory"
+          :options="availableCategoriesOptions"
+        ></b-form-select>
+        <div v-if="!createCategoryState" tabindex="-1" role="alert" aria-live="assertive" aria-atomic="true" class="d-block invalid-feedback" id="__BVID__41__BV_feedback_invalid_">category is required</div>
+
+        <b-form-group
+          class="mt-2"
+          label="Subcategory"
+          label-for="subcategory-input"
+          invalid-feedback="subcategory is required"
+          :state="createSubcategoryState"
+        >
+          <b-form-input
+            id="subcategory-input"
+            v-model="createSubcategory"
+            :state="createSubcategoryState"
+            required
+          ></b-form-input>
+        </b-form-group>
+      </form>
+    </b-modal>
   </div>
 </template>
 
@@ -118,11 +154,32 @@ export default {
       category: "All",
 
       currentSearch: "",
-      currentCategory: "All",
+      currentCategory: null,
       searchDesc: "",
-      
+
+      createCategory: null,
+      createSubcategory: "",
+      createCategoryState: null,
+      createSubcategoryState: null,
+
       availableOptions: [],
-      availableCategories: ["All", "Gender", "Race", "Religion", "Nationality", "Disability"],
+      availableCategories: [
+        "All",
+        "Gender",
+        "Race",
+        "Religion",
+        "Nationality",
+        "Disability",
+      ],
+
+      availableCategoriesOptions: [
+        { value: null, text: "None" },
+        { value: "Gender", text: "Gender" },
+        { value: "Race", text: "Race" },
+        { value: "Religion", text: "Religion" },
+        { value: "Nationality", text: "Nationality" },
+        { value: "Disability", text: "Disability" },
+      ],
 
       labels: this.annotation.labels,
       createdAt: moment(this.annotation.createdAt).tz("Asia/Singapore"),
@@ -132,26 +189,24 @@ export default {
   watch: {
     search: async function (val, oldVal) {
       this.currentSearch = val.trim().toLowerCase();
-      this.getAvailableOptions(this.currentCategory, this.currentSearch)
+      this.getAvailableOptions(this.currentCategory, this.currentSearch);
     },
     category: async function (val, oldVal) {
       this.currentCategory = val.category;
-      this.getAvailableOptions(this.currentCategory, this.currentSearch)
-    }
+      this.getAvailableOptions(this.currentCategory, this.currentSearch);
+    },
   },
   computed: {
     saveTime: function () {
       if (this.createdAt != this.updatedAt) {
-        var currentTime = moment()
+        var currentTime = moment();
         if (this.updatedAt.isSame(currentTime, "day")) {
           var duration = moment.duration(currentTime.diff(this.updatedAt));
           var hours = Math.floor(duration.asHours(), 0);
 
-          if (hours >= 1)
-            return `(${hours} hours ago)`;
-          else
-            var minutes = Math.floor(duration.asMinutes(), 0)
-            return `(${minutes} minutes ago)`;
+          if (hours >= 1) return `(${hours} hours ago)`;
+          else var minutes = Math.floor(duration.asMinutes(), 0);
+          return `(${minutes} minutes ago)`;
         } else {
           return `(${this.updatedAt.format("DD/MM h:mm:ss A")})`;
         }
@@ -196,7 +251,7 @@ export default {
       }
     },
     async getAvailableOptions(category, criteria) {
-      if (criteria || category != 'All') {
+      if (criteria || category != "All") {
         const res = await axios.get(
           `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`,
           {
@@ -213,7 +268,15 @@ export default {
       }
     },
     addTag(option) {
+      if (option.includes("Create new label")) {
+        this.createSubcategory = option.replace("Create new label: ", "");
+        this.showModal();
+        return;
+      }
+
       this.category = "All";
+
+      // Check for duplicates
       if (!this.labels.includes(option)) {
         this.labels.push(option);
       }
@@ -221,6 +284,70 @@ export default {
     removeTag(option) {
       const index = this.labels.indexOf(option);
       this.labels.splice(index, 1);
+    },
+    showModal() {
+      this.$bvModal.show("creation-modal");
+    },
+    checkFormValidity() {
+      const categoryValid = this.createCategory != null
+      const subcategoryValid = this.$refs.form.checkValidity();
+      this.createSubcategoryState = subcategoryValid;
+
+      console.log(categoryValid);
+      console.log(subcategoryValid);
+      return subcategoryValid && categoryValid;
+    },
+    resetModal() {
+      this.createCategory = null;
+      this.createCategoryState = null,
+
+      this.createSubcategory = "";
+      this.createSubcategoryState = null;
+    },
+    handleOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault();
+      // Trigger submit handler
+      this.handleSubmit();
+    },
+    async handleSubmit() {
+      // Exit when the form isn't valid
+      if (!this.checkFormValidity()) {
+        return;
+      }
+
+      const body = new URLSearchParams({
+        category: this.createCategory,
+        subcategory: this.createSubcategory,
+      });
+
+      const config = {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "x-access-token": auth.getToken(),
+        },
+      };
+
+      const res = await axios
+        .post(
+          `http://${Settings.HOST}:${Settings.PORT}/api/memes/category`,
+          body.toString(),
+          config
+        )
+        .catch((error) => {
+          console.log(error);
+        });
+
+      if (res) {
+        this.addTag(`[${this.createCategory}] ${this.createSubcategory}`)
+      }
+
+      // Push the name to submitted names
+      // this.submittedNames.push(this.name);
+      // Hide the modal manually
+      this.$nextTick(() => {
+        this.$bvModal.hide("creation-modal");
+      });
     },
   },
 };
