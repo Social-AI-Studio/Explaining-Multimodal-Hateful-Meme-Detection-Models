@@ -142,10 +142,16 @@ export default {
   computed: {
     saveTime: function () {
       if (this.createdAt != this.updatedAt) {
-        console.log(this.updatedAt);
-        console.log(moment());
-        if (this.updatedAt.isSame(moment(), "day")) {
-          return `(${this.updatedAt.startOf("day").fromNow()})`;
+        var currentTime = moment()
+        if (this.updatedAt.isSame(currentTime, "day")) {
+          var duration = moment.duration(currentTime.diff(this.updatedAt));
+          var hours = Math.floor(duration.asHours(), 0);
+
+          if (hours >= 1)
+            return `(${hours} hours ago)`;
+          else
+            var minutes = Math.floor(duration.asMinutes(), 0)
+            return `(${minutes} minutes ago)`;
         } else {
           return `(${this.updatedAt.format("DD/MM h:mm:ss A")})`;
         }
@@ -191,7 +197,6 @@ export default {
     },
     async getAvailableOptions(category, criteria) {
       if (criteria || category != 'All') {
-        console.log(`http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`)
         const res = await axios.get(
           `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`,
           {
