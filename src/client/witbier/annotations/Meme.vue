@@ -114,8 +114,8 @@ export default {
       availableOptions: [],
 
       labels: this.annotation.labels,
-      createdAt: moment(this.annotation.createdAt).tz('Asia/Singapore'),
-      updatedAt: moment(this.annotation.updatedAt).tz('Asia/Singapore'),
+      createdAt: moment(this.annotation.createdAt).tz("Asia/Singapore"),
+      updatedAt: moment(this.annotation.updatedAt).tz("Asia/Singapore"),
     };
   },
   watch: {
@@ -126,10 +126,7 @@ export default {
         const res = await axios.get(
           `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?search=${criteria}`,
           {
-            headers: {
-              "x-access-token":
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjMxNjA5MzU0LCJleHAiOjE2MzE2OTU3NTR9.k6pE6n8OfReqIXIfE4Zu301as9X6V6d2r6DbfMypr-E",
-            },
+            headers: { "x-access-token": auth.getToken() },
           }
         );
 
@@ -145,8 +142,8 @@ export default {
   computed: {
     saveTime: function () {
       if (this.createdAt != this.updatedAt) {
-        console.log(this.updatedAt)
-        console.log(moment())
+        console.log(this.updatedAt);
+        console.log(moment());
         if (this.updatedAt.isSame(moment(), "day")) {
           return `(${this.updatedAt.startOf("day").fromNow()})`;
         } else {
@@ -168,7 +165,7 @@ export default {
         labels: this.labels.join(","),
       });
 
-      console.log(body)
+      console.log(body);
 
       const config = {
         headers: {
@@ -188,7 +185,7 @@ export default {
         });
 
       if (res) {
-        this.updatedAt = moment().tz('Asia/Singapore')
+        this.updatedAt = moment().tz("Asia/Singapore");
       }
     },
     addTag(option) {
