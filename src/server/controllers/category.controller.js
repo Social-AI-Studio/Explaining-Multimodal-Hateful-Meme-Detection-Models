@@ -30,14 +30,14 @@ exports.getCategories = (req, res) => {
 };
 
 exports.createCategory = (req, res) => {
-    Category.create({
+    Category.findOne({
         name: req.body.category
     }).then(category => {
         return Subcategory.create({
             categoryId: category.id,
             name: req.body.subcategory
         })
-    }).then(category => {
+    }).then(_ => {
         res.status(200).send({ "message": "Category saved" })
     }).catch(err => {
         res.status(500).send({ message: err.message });
