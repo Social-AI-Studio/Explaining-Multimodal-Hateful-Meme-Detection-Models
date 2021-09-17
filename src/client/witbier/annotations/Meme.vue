@@ -7,12 +7,26 @@
       </p>
       <br />
 
-      <p style="margin: 0; padding: 0"><b>Computer Labels:</b></p>
+      <p style="margin: 0; padding: 0"><b>Entities Detected:</b></p>
       <ul>
         <li v-for="entity in annotation.meme.entities.split(',')" :key="entity">{{entity}}</li>
       </ul>
 
-      <p style="margin: 0; padding: 0"><b>Computer Labels:</b></p>
+      <p style="margin: 0; padding: 0"><b>Protected Category:</b></p>
+      <ul
+        v-if="protected_pc.length > 0"
+        class="list-inline d-inline-block mb-2"
+      >
+        <li
+          v-for="label in protected_pc"
+          :key="label"
+          class="list-inline-item"
+        >
+          <b-form-tag :title="label" variant="light">{{ label }}</b-form-tag>
+        </li>
+      </ul>
+
+      <p style="margin: 0; padding: 0"><b>Automated Labels:</b></p>
       <ul
         v-if="annotation.computer_labels.length > 0"
         class="list-inline d-inline-block mb-2"
@@ -157,6 +171,8 @@ export default {
   data() {
     return {
       imagepath: `http://${Settings.HOST}:${Settings.PORT}/${this.annotation.meme.image}`,
+      protected_pc: this.annotation.meme.gold_pc.split(','),
+
       error: null,
       search: "",
       category: "All",
