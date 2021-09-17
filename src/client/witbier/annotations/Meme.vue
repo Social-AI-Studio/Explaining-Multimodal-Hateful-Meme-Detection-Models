@@ -1,6 +1,6 @@
 <template>
   <div class="annotation">
-    <b-card :img-src="annotation.meme.image" img-top tag="article" class="mb-2">
+    <b-card :img-src="imagepath" img-top tag="article" class="mb-2">
       <p style="margin: 0; padding: 0">
         <b>Best Guess Labels:</b> <br />
         {{ annotation.meme.best_guess_labels }}
@@ -156,6 +156,7 @@ export default {
   props: ["annotation"],
   data() {
     return {
+      imagepath: `http://${Settings.HOST}:${Settings.PORT}/${this.annotation.meme.image}`,
       error: null,
       search: "",
       category: "All",
