@@ -10,6 +10,9 @@ module.exports = (sequelize, Sequelize) => {
     text: {
       type: Sequelize.STRING
     },
+    gold_pc: {
+      type: Sequelize.STRING
+    },
     best_guess_labels: {
       type: Sequelize.STRING
     },
