@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div align="center" class="mt-5">
     <h2>Login</h2>
     <p v-if="$route.query.redirect">
       You need to login first.
@@ -19,7 +19,7 @@ import auth from './auth'
 export default {
   data () {
     return {
-      user: 'joe@example.com',
+      user: '',
       pass: '',
       error: false
     }
