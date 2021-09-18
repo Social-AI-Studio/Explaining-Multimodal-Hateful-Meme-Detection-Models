@@ -113,49 +113,6 @@
         </b-button>
       </div>
     </b-card>
-
-    <b-modal
-      id="creation-modal"
-      ref="modal"
-      title="Create New Subcategory"
-      @hidden="resetModal"
-      @ok="handleOk"
-    >
-      <form ref="form" @submit.stop.prevent="handleSubmit">
-        <label for="sb-locales">Category</label>
-        <b-form-select
-          id="sb-locales"
-          v-model="createCategory"
-          :options="availableCategories"
-        ></b-form-select>
-        <div
-          v-if="!createCategoryState"
-          tabindex="-1"
-          role="alert"
-          aria-live="assertive"
-          aria-atomic="true"
-          class="d-block invalid-feedback"
-          id="__BVID__41__BV_feedback_invalid_"
-        >
-          category is required
-        </div>
-
-        <b-form-group
-          class="mt-2"
-          label="Subcategory"
-          label-for="subcategory-input"
-          invalid-feedback="subcategory is required"
-          :state="createSubcategoryState"
-        >
-          <b-form-input
-            id="subcategory-input"
-            v-model="createSubcategory"
-            :state="createSubcategoryState"
-            required
-          ></b-form-input>
-        </b-form-group>
-      </form>
-    </b-modal>
   </div>
 </template>
 
@@ -167,7 +124,10 @@ import auth from "../authentication/auth";
 
 export default {
   name: "meme",
-  props: ["annotation"],
+  props: [
+    "annotation",
+    "availableCategories"
+  ],
   data() {
     return {
       imagepath: `http://${Settings.HOST}:${Settings.PORT}/${this.annotation.meme.image}`,
@@ -181,20 +141,7 @@ export default {
       currentCategory: null,
       searchDesc: "",
 
-      createCategory: null,
-      createSubcategory: "",
-      createCategoryState: null,
-      createSubcategoryState: null,
-
       availableOptions: [],
-      availableCategories: [
-        { value: null, text: "None" },
-        { value: "Gender", text: "Gender" },
-        { value: "Race", text: "Race" },
-        { value: "Religion", text: "Religion" },
-        { value: "Nationality", text: "Nationality" },
-        { value: "Disability", text: "Disability" },
-      ],
       availableComponents: [
         { value: null, text: "Choose an option" },
         { value: "None", text: "Neither Components" },
@@ -293,8 +240,7 @@ export default {
     },
     addTag(option) {
       if (option.includes("Create new label")) {
-        this.createSubcategory = option.replace("Create new label: ", "");
-        this.showModal();
+        this.showModal(option.replace("Create new label: ", ""));
         return;
       }
 
@@ -309,67 +255,8 @@ export default {
       const index = this.labels.indexOf(option);
       this.labels.splice(index, 1);
     },
-    showModal() {
-      this.$bvModal.show("creation-modal");
-    },
-    checkFormValidity() {
-      const categoryValid = this.createCategory != null;
-      const subcategoryValid = this.$refs.form.checkValidity();
-      this.createSubcategoryState = subcategoryValid;
-
-      console.log(categoryValid);
-      console.log(subcategoryValid);
-      return subcategoryValid && categoryValid;
-    },
-    resetModal() {
-      this.createCategory = null;
-      (this.createCategoryState = null), (this.createSubcategory = "");
-      this.createSubcategoryState = null;
-    },
-    handleOk(bvModalEvt) {
-      // Prevent modal from closing
-      bvModalEvt.preventDefault();
-      // Trigger submit handler
-      this.handleSubmit();
-    },
-    async handleSubmit() {
-      // Exit when the form isn't valid
-      if (!this.checkFormValidity()) {
-        return;
-      }
-
-      const body = new URLSearchParams({
-        category: this.createCategory,
-        subcategory: this.createSubcategory,
-      });
-
-      const config = {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "x-access-token": auth.getToken(),
-        },
-      };
-
-      const res = await axios
-        .post(
-          `http://${Settings.HOST}:${Settings.PORT}/api/memes/category`,
-          body.toString(),
-          config
-        )
-        .catch((error) => {
-          console.log(error);
-        });
-
-      if (res) {
-        this.addTag(`[${this.createCategory}] ${this.createSubcategory}`);
-      }
-
-      // Push the name to submitted names
-      // this.submittedNames.push(this.name);
-      // Hide the modal manually
-      this.$nextTick(() => {
-        this.$bvModal.hide("creation-modal");
-      });
+    showModal(subcategory) {
+      this.$emit("onDialogClick", subcategory, this.addTag)
     },
   },
 };

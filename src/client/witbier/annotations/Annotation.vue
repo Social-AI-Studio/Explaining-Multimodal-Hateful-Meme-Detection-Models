@@ -10,6 +10,8 @@
           v-for="annotation in annotationList"
           :key="annotation.id"
           v-bind:annotation="annotation"
+          v-bind:availableCategories="availableCategories"
+          v-on:onDialogClick="onDialogClick"
         ></meme>
       </b-row>
     </b-container>
@@ -24,6 +26,49 @@
         last-number
       ></b-pagination>
     </div>
+
+    <b-modal
+      id="creation-modal"
+      ref="modal"
+      title="Create New Subcategory"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+        <label for="sb-locales">Category</label>
+        <b-form-select
+          id="sb-locales"
+          v-model="createCategory"
+          :options="availableCategories"
+        ></b-form-select>
+        <div
+          v-if="!createCategoryState"
+          tabindex="-1"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          class="d-block invalid-feedback"
+          id="__BVID__41__BV_feedback_invalid_"
+        >
+          category is required
+        </div>
+
+        <b-form-group
+          class="mt-2"
+          label="Subcategory"
+          label-for="subcategory-input"
+          invalid-feedback="subcategory is required"
+          :state="createSubcategoryState"
+        >
+          <b-form-input
+            id="subcategory-input"
+            v-model="createSubcategory"
+            :state="createSubcategoryState"
+            required
+          ></b-form-input>
+        </b-form-group>
+      </form>
+    </b-modal>
   </div>
 </template>
 
@@ -31,7 +76,7 @@
 import { Settings } from "../config/api.config";
 import Meme from "./Meme.vue";
 import axios from "axios";
-import auth from "../authentication/auth"
+import auth from "../authentication/auth";
 
 export default {
   components: {
@@ -46,6 +91,20 @@ export default {
       loading: false,
       post: null,
       error: null,
+
+      createCategory: null,
+      createSubcategory: "",
+      createCategoryState: null,
+      createSubcategoryState: null,
+
+      availableCategories: [
+        { value: null, text: "None" },
+        { value: "Gender", text: "Gender" },
+        { value: "Race", text: "Race" },
+        { value: "Religion", text: "Religion" },
+        { value: "Nationality", text: "Nationality" },
+        { value: "Disability", text: "Disability" },
+      ],
     };
   },
   created() {
@@ -68,7 +127,7 @@ export default {
           `http://${Settings.HOST}:${Settings.PORT}/api/memes/annotations?offset=${offset}&limit=${this.limit}`,
           {
             headers: {
-              "x-access-token": auth.getToken()
+              "x-access-token": auth.getToken(),
             },
           }
         )
@@ -79,6 +138,71 @@ export default {
       this.loading = false;
       this.rows = res.data.count;
       this.annotationList = res.data.rows;
+    },
+    resetModal() {
+      this.createCategory = null;
+      // (this.createCategoryState = null), (this.createSubcategory = "");
+      this.createSubcategoryState = null;
+    },
+    handleOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault();
+      // Trigger submit handler
+      this.handleSubmit();
+    },
+    async handleSubmit() {
+      // Exit when the form isn't valid
+      if (!this.checkFormValidity()) {
+        return;
+      }
+
+      const body = new URLSearchParams({
+        category: this.createCategory,
+        subcategory: this.createSubcategory,
+      });
+
+      const config = {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "x-access-token": auth.getToken(),
+        },
+      };
+
+      const res = await axios
+        .post(
+          `http://${Settings.HOST}:${Settings.PORT}/api/memes/category`,
+          body.toString(),
+          config
+        )
+        .catch((error) => {
+          console.log(error);
+        });
+
+
+      console.log(res)
+
+      if (res.status == 200) {
+        this.modalCallback(`[${this.createCategory}] ${this.createSubcategory}`);
+      }
+
+      // Push the name to submitted names
+      // this.submittedNames.push(this.name);
+      // Hide the modal manually
+      this.$nextTick(() => {
+        this.$bvModal.hide("creation-modal");
+      });
+    },
+    checkFormValidity() {
+      const categoryValid = this.createCategory != null;
+      const subcategoryValid = this.$refs.form.checkValidity();
+      this.createSubcategoryState = subcategoryValid;
+
+      return subcategoryValid && categoryValid;
+    },
+    onDialogClick(subcategory, cb) {
+      this.createSubcategory = subcategory;
+      this.modalCallback = cb;
+      this.$bvModal.show("creation-modal");
     },
   },
 };
