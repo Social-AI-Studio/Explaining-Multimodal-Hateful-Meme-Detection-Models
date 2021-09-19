@@ -5,6 +5,7 @@
       {{ error }}
     </div>
     <b-container>
+
       <b-row cols-md="3">
         <meme
           v-for="annotation in annotationList"
@@ -14,18 +15,19 @@
           v-on:onDialogClick="onDialogClick"
         ></meme>
       </b-row>
-    </b-container>
 
-    <div class="mt-3">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="rows"
-        align="center"
-        per-page="9"
-        hide-goto-end-buttons
-        last-number
-      ></b-pagination>
-    </div>
+      <div class="mt-3">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          align="center"
+          per-page="9"
+          hide-goto-end-buttons
+          last-number
+        ></b-pagination>
+      </div>
+      
+    </b-container>
 
     <b-modal
       id="creation-modal"
@@ -178,11 +180,12 @@ export default {
           console.log(error);
         });
 
-
-      console.log(res)
+      console.log(res);
 
       if (res.status == 200) {
-        this.modalCallback(`[${this.createCategory}] ${this.createSubcategory}`);
+        this.modalCallback(
+          `[${this.createCategory}] ${this.createSubcategory}`
+        );
       }
 
       // Push the name to submitted names
