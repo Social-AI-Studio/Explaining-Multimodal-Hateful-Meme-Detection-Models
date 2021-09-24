@@ -10,14 +10,16 @@ exports.getAnnotations = (req, res) => {
     var results = {}
     Annotation.findAndCountAll({
         where: {
-            userId: req.userId,
+            UserId: req.userId,
+            StageId: req.query.stage
         },
         include: [
             {
                 model: Meme
             }
         ],
-        offset: req.query.offset, limit: req.query.limit,
+        offset: req.query.offset, 
+        limit: req.query.limit,
         order: [
             ['id', 'ASC']
         ]

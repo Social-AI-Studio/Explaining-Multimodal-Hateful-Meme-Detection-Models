@@ -9,15 +9,14 @@ exports.getCategories = (req, res) => {
 
     if (req.query.category != 'All') {
         searchOpts['where'] = {
-            '$category.name$': req.query.category
+            '$Category.name$': req.query.category
         }
     }
 
     Subcategory.findAll(searchOpts).then(results => {
         var categories = []
-        console.log(results)
         results.forEach(element => {
-            categories.push(`[${element.category.name}] ${element.name}`)
+            categories.push(`[${element.Category.name}] ${element.name}`)
         });
 
         // Filter categories
@@ -30,17 +29,13 @@ exports.getCategories = (req, res) => {
 };
 
 exports.createCategory = (req, res) => {
-    console.log(req.body.category)
     Category.findOne({
         where: {
             name: req.body.category
         }
     }).then(category => {
-        console.log(category)
-        console.log(category.id)
-        console.log(category.name)
         return Subcategory.create({
-            categoryId: category.id,
+            CategoryId: category.id,
             name: req.body.subcategory
         })
     }).then(_ => {

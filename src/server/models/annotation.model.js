@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(models.User);
       this.belongsTo(models.Meme);
+      this.belongsTo(models.Stage);
     }
   };
   Annotation.init({
