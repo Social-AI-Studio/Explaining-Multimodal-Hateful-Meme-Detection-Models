@@ -1,13 +1,32 @@
-module.exports = (sequelize, Sequelize) => {
-  const Annotation = sequelize.define("annotations", {
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Annotation extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+      this.belongsTo(models.User);
+      this.belongsTo(models.Meme);
+    }
+  };
+  Annotation.init({
     labels: {
-      type: Sequelize.STRING
+      type: DataTypes.STRING,
+      defaultValue: null,
     },
     components: {
-      type: Sequelize.STRING,
-      defaultValue: null
+      type: DataTypes.STRING,
+      defaultValue: null,
     }
+  }, {
+    sequelize,
+    modelName: 'Annotation',
   });
-
   return Annotation;
 };

@@ -1,6 +1,6 @@
 const db = require("../models");
-const Category = db.category;
-const Subcategory = db.subcategory;
+const Category = db.Category;
+const Subcategory = db.Subcategory;
 
 exports.getCategories = (req, res) => {
     var searchOpts = {

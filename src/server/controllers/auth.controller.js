@@ -1,7 +1,8 @@
 const db = require("../models");
 const config = require("../config/auth.config");
-const User = db.user;
-const Role = db.role;
+const User = db.User;
+const Annotation = db.Annotation;
+const Role = db.Role;
 
 const Op = db.Sequelize.Op;
 
@@ -41,47 +42,88 @@ var bcrypt = require("bcryptjs");
 // };
 
 exports.signin = (req, res) => {
+  var content = {}
+
   User.findOne({
     where: {
       username: req.body.username
     }
-  })
-    .then(user => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
-      
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+  }).then(user => {
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
+    var passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
 
-      var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400 // 24 hours
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!"
       });
+    }
 
-      var authorities = [];
-      user.getRoles().then(roles => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push("ROLE_" + roles[i].name.toUpperCase());
-        }
-        res.status(200).send({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          roles: authorities,
-          accessToken: token
-        });
-      });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
+    // Count the number of annotations performed
+    content.id = user.id
+    content.username = user.username
+    content.email = user.email
+    content.accessToken = jwt.sign({ id: user.id }, config.secret, {
+      expiresIn: 86400 // 24 hours
     });
+
+    //   return user.getRoles()
+    // }).then(roles => {
+    //   var authorities = [];
+    //   for (let i = 0; i < roles.length; i++) {
+    //     authorities.push("ROLE_" + roles[i].name.toUpperCase());
+    //   }
+
+    //   content.authorities = authorities
+
+    //   return Annotation.count({
+    //     where: {
+    //       userId: content.id,
+    //       components: {
+    //         [Op.ne]: null
+    //       }
+    //     }
+    //   })
+    // }).then(annotationCount => {
+    //   content.annotationCount = annotationCount;
+    //   res.status(200).send(content)
+
+    const rolePromise = user.getRoles()
+
+    const currentCountPromise = Annotation.count({
+      where: {
+        userId: content.id,
+        components: {
+          [Op.ne]: null
+        }
+      }
+    })
+
+    const totalCountPromise = Annotation.count({
+      where: {
+        userId: content.id
+      }
+    })
+
+    return Promise.all([rolePromise, currentCountPromise, totalCountPromise])
+  }).then((promises) => {
+    const [roles, currentCount, totalCount] = promises;
+    var authorities = [];
+    for (let i = 0; i < roles.length; i++) {
+      authorities.push("ROLE_" + roles[i].name.toUpperCase());
+    }
+
+    content.authorities = authorities
+    content.currentCount = currentCount;
+    content.totalCount = totalCount;
+    res.status(200).send(content)
+  }).catch(err => {
+    res.status(500).send({ message: err.message });
+  });
 };

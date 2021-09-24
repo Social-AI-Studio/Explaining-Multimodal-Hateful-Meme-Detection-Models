@@ -1,6 +1,6 @@
 const db = require("../models");
-const Annotation = db.annotation;
-const Meme = db.meme;
+const Annotation = db.Annotation;
+const Meme = db.Meme;
 const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
