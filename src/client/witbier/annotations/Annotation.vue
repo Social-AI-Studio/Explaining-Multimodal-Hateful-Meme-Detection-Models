@@ -123,10 +123,11 @@ export default {
       this.loading = true;
 
       const offset = (this.currentPage - 1) * this.limit;
+      const routeId = this.$route.params.routeId;
 
       const res = await axios
         .get(
-          `http://${Settings.HOST}:${Settings.PORT}/api/memes/annotations?offset=${offset}&limit=${this.limit}`,
+          `http://${Settings.HOST}:${Settings.PORT}/api/memes/annotations?offset=${offset}&limit=${this.limit}&stage=${routeId}`,
           {
             headers: {
               "x-access-token": auth.getToken(),

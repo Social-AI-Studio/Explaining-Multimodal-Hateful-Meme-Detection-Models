@@ -6,6 +6,7 @@ import NavBar from './NavBar.vue'
 
 import Login from './authentication/Login.vue'
 import Annotation from './annotations/Annotation.vue'
+import Stage from './stages/Stage.vue'
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
@@ -35,14 +36,15 @@ const router = new VueRouter({
   base: __dirname,
   routes: [
     { path: '/login', component: Login },
-    { path: '/annotation', component: Annotation, beforeEnter: requireAuth },
+    { path: '/stage', component: Stage, beforeEnter: requireAuth },
+    { path: '/annotations/:routeId', name: 'annotations', component: Annotation, beforeEnter: requireAuth },
     {
       path: '/', component: Home,
       beforeEnter(to, from, next) {
-        if (!auth.loggedIn()) 
+        if (!auth.loggedIn())
           next('/login')
         else
-          next('/annotation')
+          next('/stage')
       }
     },
     {

@@ -9,9 +9,9 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-item>
-            <router-link v-if="loggedIn" to="/annotation">Annotation</router-link>
-            <router-link v-if="loggedIn" to="/logout">Log out</router-link>
-            <router-link v-if="!loggedIn" to="/login">Log in</router-link>
+            <router-link style="color:white;" v-if="loggedIn" to="/stage">Annotations</router-link>
+            <router-link style="color:white;" v-if="loggedIn" to="/logout">Log out</router-link>
+            <router-link style="color:white;" v-if="!loggedIn" to="/login">Log in</router-link>
           </b-nav-item>
         </b-navbar-nav>
       </b-collapse>

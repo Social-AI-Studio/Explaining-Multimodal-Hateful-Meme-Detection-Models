@@ -3,13 +3,13 @@
     <b-card :img-src="imagepath" img-top tag="article" class="mb-2">
       <p style="margin: 0; padding: 0">
         <b>Best Guess Labels:</b> <br />
-        {{ annotation.meme.best_guess_labels }}
+        {{ annotation.Meme.best_guess_labels }}
       </p>
       <br />
 
       <p style="margin: 0; padding: 0"><b>Entities Detected:</b></p>
       <ul>
-        <li v-for="entity in annotation.meme.entities.split(',')" :key="entity">{{entity}}</li>
+        <li v-for="entity in annotation.Meme.entities" :key="entity">{{entity}}</li>
       </ul>
 
       <p style="margin: 0; padding: 0"><b>Protected Category:</b></p>
@@ -28,11 +28,11 @@
 
       <p style="margin: 0; padding: 0"><b>Automated Labels:</b></p>
       <ul
-        v-if="annotation.computer_labels.length > 0"
+        v-if="annotation.Meme.automated_labels.length > 0"
         class="list-inline d-inline-block mb-2"
       >
         <li
-          v-for="label in annotation.computer_labels"
+          v-for="label in annotation.Meme.automated_labels"
           :key="label"
           class="list-inline-item"
         >
@@ -130,8 +130,8 @@ export default {
   ],
   data() {
     return {
-      imagepath: `http://${Settings.HOST}:${Settings.PORT}/${this.annotation.meme.image}`,
-      protected_pc: this.annotation.meme.gold_pc.split(','),
+      imagepath: `http://${Settings.HOST}:${Settings.PORT}/${this.annotation.Meme.image}`,
+      protected_pc: this.annotation.Meme.gold_pc.split(','),
 
       error: null,
       search: "",

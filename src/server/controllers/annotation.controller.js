@@ -7,7 +7,6 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.getAnnotations = (req, res) => {
-    var results = {}
     Annotation.findAndCountAll({
         where: {
             UserId: req.userId,
@@ -24,26 +23,20 @@ exports.getAnnotations = (req, res) => {
             ['id', 'ASC']
         ]
     }).then(annotations => {
-        results = annotations
-
-        var memeIds = []
-        results.rows.forEach(element => {
-            memeIds.push(element.memeId)
-        });
-
-        return Annotation.findAll({
-            where: {
-                userId: 1,
-                memeId: memeIds
+        for (let index = 0; index < annotations.rows.length; index++) {
+            const label = annotations.rows[index].dataValues.labels
+            if (label == null){
+                annotations.rows[index].dataValues.labels = []
+            } else {
+                annotations.rows[index].dataValues.labels = label.split(',')
             }
-        })
-    }).then(annotations => {
-        for (let index = 0; index < annotations.length; index++) {
-            results.rows[index].dataValues.labels = results.rows[index].dataValues.labels.split(",");
-            results.rows[index].dataValues.computer_labels = annotations[index].labels.split(",");
+
+            console.log(annotations.rows[index].dataValues.Meme.dataValues.entities)
+            annotations.rows[index].dataValues.Meme.dataValues.entities = annotations.rows[index].dataValues.Meme.dataValues.entities.split(',')
+            annotations.rows[index].dataValues.Meme.dataValues.automated_labels = annotations.rows[index].dataValues.Meme.dataValues.automated_labels.split(',')
         }
 
-        res.status(200).send(results);
+        res.status(200).send(annotations);
     }).catch(err => {
         res.status(500).send({ message: err.message });
     });
