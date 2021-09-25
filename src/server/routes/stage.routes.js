@@ -15,4 +15,10 @@ module.exports = function(app) {
     [authJwt.verifyToken],
     controller.getStages
   );
+
+  app.get(
+    "/api/memes/stage",
+    [authJwt.verifyToken],
+    controller.getStage
+  );
 };

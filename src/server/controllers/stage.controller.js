@@ -34,3 +34,30 @@ exports.getStages = (req, res) => {
         res.status(500).send({ message: err.message });
     });
 };
+
+exports.getStage = (req, res) => {
+    var results = {}
+    Stage.findOne({
+        where: {
+            id: req.query.stage,
+        }
+    }).then(stage => {
+        results = stage
+
+        return Annotation.count({
+            where: {
+                UserId: req.userId,
+                StageId: stage.id,
+                labels: {
+                    [Op.not]: null
+                }
+            }
+        })
+    }).then(count => {
+        results.dataValues.currentCount = count;
+
+        res.status(200).send(results);
+    }).catch(err => {
+        res.status(500).send({ message: err.message });
+    });
+};
