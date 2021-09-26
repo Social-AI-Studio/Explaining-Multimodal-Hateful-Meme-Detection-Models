@@ -7,7 +7,7 @@ exports.getCategories = (req, res) => {
         include: [Category]
     }
 
-    if (req.query.category != 'All') {
+    if (req.query.category != "null") {
         searchOpts['where'] = {
             '$Category.name$': req.query.category
         }
