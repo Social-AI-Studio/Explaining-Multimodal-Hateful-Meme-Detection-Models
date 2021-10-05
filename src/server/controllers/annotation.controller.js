@@ -46,8 +46,7 @@ exports.getAnnotations = (req, res) => {
 
 exports.saveAnnotation = (req, res) => {
     Annotation.update({
-        labels: req.body.labels,
-        components: req.body.components
+        labels: req.body.labels
     }, {
         where: {
             id: req.body.memeId,
