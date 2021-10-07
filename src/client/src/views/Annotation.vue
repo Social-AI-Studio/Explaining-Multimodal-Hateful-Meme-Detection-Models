@@ -4,6 +4,11 @@
     <div v-if="error" class="error">
       {{ error }}
     </div>
+    <div align="center">
+      <span><b>{{this.stage}}</b></span> <br>
+      {{this.currCount}} / {{this.totalCount}}
+    </div>
+    <br>
     <b-container>
 
       <b-row cols-md="3">
@@ -11,15 +16,15 @@
           v-for="annotation in annotationList"
           :key="annotation.id"
           v-bind:annotation="annotation"
-          v-bind:availableCategories="availableCategories"
           v-on:onDialogClick="onDialogClick"
+          v-on:onSaveClick="onSaveClick"
         ></meme>
       </b-row>
 
       <div class="mt-3">
         <b-pagination
           v-model="currentPage"
-          :total-rows="rows"
+          :total-rows="totalCount"
           align="center"
           per-page="9"
           hide-goto-end-buttons
@@ -76,9 +81,9 @@
 
 <script>
 import { Settings } from "../config/api.config";
-import Meme from "./Meme.vue";
+import Meme from "../components/Meme.vue";
+import auth from "../utils/auth";
 import axios from "axios";
-import auth from "../authentication/auth";
 
 export default {
   components: {
@@ -86,7 +91,10 @@ export default {
   },
   data() {
     return {
-      rows: 1,
+      stage: "",
+      currCount: 0,
+      totalCount: 1,
+
       currentPage: 1,
       limit: 9,
 
@@ -109,25 +117,49 @@ export default {
       ],
     };
   },
-  created() {
-    this.fetchData();
+  async created() {
+    await this.fetchStage();
+    await this.fetchMemes();
   },
   watch: {
-    currentPage: function (val, oldVal) {
-      this.fetchData();
+    currentPage: async function () {
+      await this.fetchMemes();
     },
   },
   methods: {
-    async fetchData() {
+    async fetchMemes() {
       this.error = this.annotationList = null;
       this.loading = true;
 
       const offset = (this.currentPage - 1) * this.limit;
-      const routeId = this.$route.params.routeId;
+      const stageId = this.$route.params.stageId;
 
       const res = await axios
         .get(
-          `http://${Settings.HOST}:${Settings.PORT}/api/memes/annotations?offset=${offset}&limit=${this.limit}&stage=${routeId}`,
+          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/annotations?offset=${offset}&limit=${this.limit}&stage=${stageId}`,
+          {
+            headers: {
+              "x-access-token": auth.getToken(),
+            },
+          }
+        )
+        .catch((err) => {
+          console.log(err);
+        });
+
+      console.log(res)
+      this.loading = false;
+      this.annotationList = res.data;
+    },
+    async fetchStage() {
+      this.error = this.stage = null;
+      this.loading = true;
+
+      const stageId = this.$route.params.stageId;
+
+      const res = await axios
+        .get(
+          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/stage?stage=${stageId}`,
           {
             headers: {
               "x-access-token": auth.getToken(),
@@ -139,8 +171,9 @@ export default {
         });
 
       this.loading = false;
-      this.rows = res.data.count;
-      this.annotationList = res.data.rows;
+      this.stage = res.data.name;
+      this.currCount = res.data.currentCount;
+      this.totalCount = res.data.totalCount;
     },
     resetModal() {
       this.createCategory = null;
@@ -173,7 +206,7 @@ export default {
 
       const res = await axios
         .post(
-          `http://${Settings.HOST}:${Settings.PORT}/api/memes/category`,
+          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/category`,
           body.toString(),
           config
         )
@@ -207,6 +240,9 @@ export default {
       this.createSubcategory = subcategory;
       this.modalCallback = cb;
       this.$bvModal.show("creation-modal");
+    },
+    onSaveClick() {
+      this.currCount += 1;
     },
   },
 };

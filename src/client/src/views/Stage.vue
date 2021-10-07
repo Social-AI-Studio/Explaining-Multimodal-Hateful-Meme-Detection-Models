@@ -6,7 +6,7 @@
           <b-card
             border-variant="info"
             :header="task.name"
-            class="m-2"
+            class="m-1"
             align="center"
           >
             <b-card-text>
@@ -14,7 +14,7 @@
             </b-card-text>
 
             <router-link
-              :to="{ name: 'annotations', params: { routeId: task.id } }"
+              :to="{ name: 'annotations', params: { stageId: task.id } }"
             >
               <b-button variant="info">Start!</b-button>
             </router-link>
@@ -26,8 +26,8 @@
 </template>
 <script>
 import { Settings } from "../config/api.config";
+import auth from "../utils/auth";
 import axios from "axios";
-import auth from "../authentication/auth";
 
 export default {
   data() {
@@ -43,10 +43,8 @@ export default {
       this.error = this.taskList = null;
       this.loading = true;
 
-      const offset = (this.currentPage - 1) * this.limit;
-
       const res = await axios
-        .get(`http://${Settings.HOST}:${Settings.PORT}/api/memes/stages`, {
+        .get(`${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/stages`, {
           headers: {
             "x-access-token": auth.getToken(),
           },

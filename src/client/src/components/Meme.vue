@@ -1,6 +1,6 @@
 <template>
-  <div class="annotation">
-    <b-card :img-src="imagepath" img-top tag="article" class="mb-2">
+  <div class="annotation p-1">
+    <b-card :img-src="imagepath" img-top tag="article">
       <p style="margin: 0; padding: 0">
         <b>Best Guess Labels:</b> <br />
         {{ annotation.Meme.best_guess_labels }}
@@ -82,28 +82,6 @@
         </b-dropdown-item-button>
       </div>
 
-      <p style="padding: 0; margin-top: 0.5rem; margin-bottom: 0">
-        <b>Hateful Components:</b>
-      </p>
-
-      <b-form-select
-        id="component-select"
-        v-model="components"
-        :options="availableComponents"
-      ></b-form-select>
-
-      <div
-        v-if="components == null"
-        tabindex="-1"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-        class="d-block invalid-feedback"
-        id="__BVID__41__BV_feedback_invalid_"
-      >
-        component is required
-      </div>
-
       <div class="mt-2" style="text-align: center">
         <b-button variant="info" v-if="saveTime != '(Unsaved)'" @click="onSaveButton()"
           >Save {{ saveTime }}
@@ -118,56 +96,61 @@
 
 <script>
 import { Settings } from "../config/api.config";
+import auth from "../utils/auth";
 import axios from "axios";
 import moment from "moment-timezone";
-import auth from "../authentication/auth";
 
 export default {
   name: "meme",
   props: [
     "annotation",
-    "availableCategories"
   ],
   data() {
     return {
-      imagepath: `http://${Settings.HOST}:${Settings.PORT}/${this.annotation.Meme.image}`,
+      imagepath: `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/${this.annotation.Meme.image}`,
       protected_pc: this.annotation.Meme.gold_pc.split(','),
 
       error: null,
+      category: null,
       search: "",
-      category: "All",
 
       currentSearch: "",
       currentCategory: null,
       searchDesc: "",
 
       availableOptions: [],
-      availableComponents: [
-        { value: null, text: "Choose an option" },
-        { value: "None", text: "Neither Components" },
-        { value: "Text", text: "Text Component" },
-        { value: "Image", text: "Image Components" },
-        { value: "Text + Image", text: "Both Components" },
+      availableCategories: [
+        { value: null, text: "All" },
+        { value: "Gender", text: "Gender" },
+        { value: "Race", text: "Race" },
+        { value: "Religion", text: "Religion" },
+        { value: "Nationality", text: "Nationality" },
+        { value: "Disability", text: "Disability" },
+        { value: "Neutral", text: "Neutral" },
       ],
 
       labels: this.annotation.labels,
-      components: this.annotation.components,
       createdAt: moment(this.annotation.createdAt).tz("Asia/Singapore"),
       updatedAt: moment(this.annotation.updatedAt).tz("Asia/Singapore"),
     };
   },
   watch: {
-    search: async function (val, oldVal) {
+    search: async function (val) {
       this.currentSearch = val.trim().toLowerCase();
-      this.getAvailableOptions(this.currentCategory, this.currentSearch);
+
+      console.log(`currentSearch: ${this.currentSearch}`)
+      if (this.currentSearch)
+        this.getAvailableOptions(this.currentCategory, this.currentSearch);
+      else
+        this.availableOptions = [];
     },
-    currentCategory: async function (val, oldVal) {
+    currentCategory: async function () {
       this.getAvailableOptions(this.currentCategory, this.currentSearch);
     },
   },
   computed: {
     saveTime: function () {
-      if (!this.createdAt.isSame(this.updatedAt)) {
+      if (this.labels.length !== 0 && !this.createdAt.isSame(this.updatedAt)) {
         var currentTime = moment();
         if (this.updatedAt.isSame(currentTime, "day")) {
           var duration = moment.duration(currentTime.diff(this.updatedAt));
@@ -190,12 +173,11 @@ export default {
       this.search = "";
     },
     async onSaveButton() {
-      if (this.components == null) return;
+      if (this.labels.length === 0) return null;
 
       const body = new URLSearchParams({
         memeId: this.annotation.id,
-        labels: this.labels.join(","),
-        components: this.components,
+        labels: this.labels.join(",")
       });
 
       const config = {
@@ -207,7 +189,7 @@ export default {
 
       const res = await axios
         .post(
-          `http://${Settings.HOST}:${Settings.PORT}/api/memes/annotation`,
+          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/annotation`,
           body.toString(),
           config
         )
@@ -218,11 +200,16 @@ export default {
       if (res) {
         this.updatedAt = moment().tz("Asia/Singapore");
       }
+
+      this.$emit("onSaveClick")
     },
     async getAvailableOptions(category, criteria) {
+      console.log(criteria)
+      console.log(category)
       if (criteria || category) {
+        console.log("Calling")
         const res = await axios.get(
-          `http://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`,
+          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/categories?category=${category}&search=${criteria}`,
           {
             headers: { "x-access-token": auth.getToken() },
           }
@@ -234,6 +221,7 @@ export default {
 
         this.availableOptions = options;
       } else {
+        console.log("Nah")
         // Show all options available
         this.availableOptions = [];
       }

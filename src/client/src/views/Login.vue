@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import auth from './auth'
+import auth from '../utils/auth'
 
 export default {
   data () {
@@ -30,7 +30,7 @@ export default {
         if (!loggedIn) {
           this.error = true
         } else {
-          this.$router.replace(this.$route.query.redirect || '/')
+          this.$router.replace(this.$route.query.redirect || '/stages')
         }
       })
     }

@@ -1,5 +1,3 @@
-/* globals localStorage */
-
 import axios from 'axios';
 import { Settings } from '../config/api.config';
 
@@ -22,7 +20,7 @@ export default {
             }
         }
 
-        const login = await axios.post(`http://${Settings.HOST}:${Settings.PORT}/api/auth/signin`,
+        const login = await axios.post(`${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/auth/signin`,
             body.toString(), config
         ).catch(error => {
             console.log(error)
