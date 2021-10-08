@@ -1,20 +1,64 @@
 <template>
   <div class="mt-3">
+
     <b-container>
+      <h4 align="center" class="mb-4">Stages</h4>
       <b-row cols-md="4">
-        <div v-for="task in taskList" :key="task.id">
+        <div v-for="annot in annotations" :key="annot.id">
           <b-card
             border-variant="info"
-            :header="task.name"
+            :header="annot.name"
             class="m-1"
             align="center"
           >
             <b-card-text>
-              <p>Progress: {{ task.currentCount }} / {{ task.totalCount }}</p>
+              <p>Progress: {{ annot.currentCount }} / {{ annot.totalCount }}</p>
             </b-card-text>
 
             <router-link
-              :to="{ name: 'annotations', params: { stageId: task.id } }"
+              :to="{ name: 'annotations', params: { stageId: annot.id } }"
+            >
+              <b-button variant="info">Start!</b-button>
+            </router-link>
+          </b-card>
+        </div>
+      </b-row>
+      <h4 align="center" class="mt-4 mb-4">Cross-Checks</h4>
+      <b-row cols-md="4">
+        <div v-for="check in checks" :key="check.id">
+          <b-card
+            border-variant="info"
+            :header="check.name"
+            class="m-1"
+            align="center"
+          >
+            <b-card-text>
+              <p>Progress: {{ check.currentCount }} / {{ check.totalCount }}</p>
+            </b-card-text>
+
+            <router-link
+              :to="{ name: 'annotations', params: { stageId: check.id } }"
+            >
+              <b-button variant="info">Start!</b-button>
+            </router-link>
+          </b-card>
+        </div>
+      </b-row>
+      <h4 align="center" class="mt-4 mb-4">Consolidations</h4>
+      <b-row cols-md="4">
+        <div v-for="con in consolidations" :key="con.id">
+          <b-card
+            border-variant="info"
+            :header="con.name"
+            class="m-1"
+            align="center"
+          >
+            <b-card-text>
+              <p>Progress: {{ con.currentCount }} / {{ con.totalCount }}</p>
+            </b-card-text>
+
+            <router-link
+              :to="{ name: 'annotations', params: { stageId: con.id } }"
             >
               <b-button variant="info">Start!</b-button>
             </router-link>
@@ -32,7 +76,9 @@ import axios from "axios";
 export default {
   data() {
     return {
-      taskList: [],
+      annotations: [],
+      checks: [],
+      consolidation: [],
     };
   },
   created() {
@@ -54,7 +100,10 @@ export default {
         });
 
       this.loading = false;
-      this.taskList = res.data;
+
+      this.annotations = res.data.filter(e => e.PhaseId === 1);
+      this.checks = res.data.filter(e => e.PhaseId === 2);
+      this.consolidations = res.data.filter(e => e.PhaseId === 3);
     },
   },
 };
