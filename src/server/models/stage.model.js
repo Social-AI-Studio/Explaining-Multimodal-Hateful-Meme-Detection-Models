@@ -11,11 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Stage.belongsToMany(models.User, {
+      this.belongsToMany(models.User, {
         through: "UserStages",
         foreignKey: "StageId",
         otherKey: "UserId"
       });
+
+      this.hasOne(models.Phase);
     }
   };
   Stage.init({
@@ -29,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     totalCount: {
+      type: DataTypes.INTEGER
+    },
+    PhaseId: { // Temporary
       type: DataTypes.INTEGER
     }
   }, {

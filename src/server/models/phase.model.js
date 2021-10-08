@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Annotation extends Model {
+  class Phase extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,19 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.User);
-      this.belongsTo(models.Meme);
       this.belongsTo(models.Stage);
     }
   };
-  Annotation.init({
-    labels: {
-      type: DataTypes.STRING,
-      defaultValue: null,
-    }
+  Phase.init({
+    name: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Annotation',
+    modelName: 'Phase',
   });
-  return Annotation;
+  return Phase;
 };

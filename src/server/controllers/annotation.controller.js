@@ -8,8 +8,6 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.getAnnotations = (req, res) => {
-
-
     Annotation.findAll({
         where: {
             UserId: req.userId,
