@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Stage.belongsToMany(models.User, {
+        through: "UserStages",
+        foreignKey: "StageId",
+        otherKey: "UserId"
+      });
     }
   };
   Stage.init({

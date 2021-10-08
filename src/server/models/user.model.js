@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         otherKey: "roleId"
       });
+      
+      User.belongsToMany(models.Stage, {
+        through: "UserStages",
+        foreignKey: "UserId",
+        otherKey: "StageId"
+      });
     }
   };
   User.init({

@@ -1,16 +1,21 @@
 const db = require("../models");
 const Stage = db.Stage;
 const Annotation = db.Annotation;
+const User = db.User;
 
 const Op = db.Sequelize.Op;
 
-exports.getStages = (req, res) => {
+exports.getStages = async (req, res) => {
     var results = {}
-    Stage.findAll().then(stages => {
+    
+    User.findOne({
+        where: { id: req.userId }
+    }).then(user => {
+        return user.getStages()
+    }).then(stages => {
         results = stages
 
         var promises = []
-        // console.log(results)
         results.forEach(element => {
             promises.push(Annotation.count({
                 where: {
