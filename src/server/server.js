@@ -7,7 +7,7 @@ const app = express();
 var corsOptions = {
 	origin: [
 		"http://localhost:8000",
-		"http://174.138.21.176:8000"
+		"https://tasks.mingshan.hee.com"
 	]
 };
 
