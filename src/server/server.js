@@ -36,6 +36,7 @@ require('./routes/auth.routes')(app);
 require('./routes/annotation.routes')(app);
 require('./routes/category.routes')(app);
 require('./routes/stage.routes')(app);
+require('./routes/consolidation.routes')(app);
 
 app.use('/img', express.static(__dirname + '/dataset/img'))
 
