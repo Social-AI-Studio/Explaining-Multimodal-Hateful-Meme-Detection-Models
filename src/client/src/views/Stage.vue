@@ -58,7 +58,7 @@
             </b-card-text>
 
             <router-link
-              :to="{ name: 'annotations', params: { stageId: con.id } }"
+              :to="{ name: 'consolidations', params: { stageId: con.id } }"
             >
               <b-button variant="info">Start!</b-button>
             </router-link>
@@ -78,7 +78,7 @@ export default {
     return {
       annotations: [],
       checks: [],
-      consolidation: [],
+      consolidations: [],
     };
   },
   created() {

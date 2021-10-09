@@ -27,19 +27,19 @@ const routes = [
     path: '/stages',
     name: 'stages',
     beforeEnter: requireAuth,
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/Stage.vue')
   },
   {
     path: '/annotations/:stageId',
     name: 'annotations',
     beforeEnter: requireAuth,
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/Annotation.vue')
+  },
+  {
+    path: '/consolidations/:stageId',
+    name: 'consolidations',
+    beforeEnter: requireAuth,
+    component: () => import(/* webpackChunkName: "about" */ '../views/Consolidation.vue')
   },
   {
     path: '/logout',
