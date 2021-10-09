@@ -51,19 +51,25 @@ exports.getConsolidations = (req, res) => {
         
         return Promise.all(promises)
     }).then(annotations => {
-        for (let index = 0; index < annotations.length; index++) {
-            var elements = annotations[index];
+        for (let aidx = 0; aidx < annotations.length; aidx++) {
+            var elements = annotations[aidx];
             elements = elements.sort(() => Math.random() - 0.5);
 
             var prelabels = []
-            for (let index = 0; index < elements.length; index++) {
-                const el = elements[index];
+            for (let eidx = 0; eidx < elements.length; eidx++) {
+                const el = elements[eidx];
                 const label = el.dataValues.labels
                 
-                prelabels.push(label.split(','))
+                if (el.dataValues.UserId == req.userId) {
+                    if (results[aidx].dataValues.labels.length == 0) {
+                        results[aidx].dataValues.labels = label.split(',')
+                    }
+                } else {
+                    prelabels.push(label.split(','))
+                }
             }
 
-            results[index].dataValues.prelabels = prelabels
+            results[aidx].dataValues.prelabels = prelabels
         }
 
         res.status(200).send(results);
