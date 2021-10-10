@@ -77,3 +77,22 @@ exports.getConsolidations = (req, res) => {
         res.status(500).send({ message: err.message });
     });
 };
+
+exports.saveConsolidation = (req, res) => {
+    Annotation.update({
+        labels: req.body.labels,
+        remarks: req.body.remarks
+    }, {
+        where: {
+            id: req.body.memeId,
+            userId: req.userId
+        }
+    }).then(result => {
+        if (result == 1)
+            res.status(200).send({ message: `Annotation ${req.body.memeId} updated` });
+        else
+            res.status(500).send({ message: `Annotation ${req.body.memeId} not found` });
+    }).catch(err => {
+        res.status(500).send({ message: err.message });
+    });
+};

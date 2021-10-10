@@ -15,4 +15,10 @@ module.exports = function(app) {
     [authJwt.verifyToken],
     controller.getConsolidations
   );
+
+  app.post(
+    "/api/memes/consolidations",
+    [authJwt.verifyToken],
+    controller.saveConsolidation
+  );
 };
