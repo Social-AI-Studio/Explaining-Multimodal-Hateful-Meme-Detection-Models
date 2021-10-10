@@ -74,9 +74,20 @@
         ></b-form-input>
       </b-input-group>
 
+      <p class="mt-4 mb-1 p-0"><b>Remarks:</b></p>
+      <b-input-group>
+        <b-form-input
+          v-model="remarks"
+          id="remarks-input"
+          autocomplete="off"
+        ></b-form-input>
+      </b-input-group>
+      <p v-if="remarksError" class="error mt-0 pt-0">Do not leave your justifications blank!</p>
+
       <div
         v-if="availableOptions.length > 0"
         style="border: 1px solid rgba(0, 0, 0, 0.125)"
+        class="mt-2"
       >
         <b-dropdown-item-button
           v-for="option in availableOptions"
@@ -140,8 +151,11 @@ export default {
       ],
 
       labels: this.annotation.labels,
+      remarks: this.annotation.remarks,
       createdAt: moment(this.annotation.createdAt).tz("Asia/Singapore"),
       updatedAt: moment(this.annotation.updatedAt).tz("Asia/Singapore"),
+
+      remarksError: false
     };
   },
   watch: {
@@ -182,11 +196,19 @@ export default {
       this.search = "";
     },
     async onSaveButton() {
+      if (this.remarks === "") {
+        this.remarksError = true;
+        return null
+      } else {
+        this.remarksError = false;
+      }
+
       if (this.labels.length === 0) return null;
 
       const body = new URLSearchParams({
         memeId: this.annotation.id,
         labels: this.labels.join(","),
+        remarks: this.remarks
       });
 
       const config = {
@@ -198,7 +220,7 @@ export default {
 
       const res = await axios
         .post(
-          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/annotation`,
+          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/consolidation`,
           body.toString(),
           config
         )
@@ -274,5 +296,12 @@ export default {
 .slide-leave-active {
   opacity: 0;
   transform: translate(-30px, 0);
+}
+</style>
+
+
+<style>
+.error {
+  color: red;
 }
 </style>
