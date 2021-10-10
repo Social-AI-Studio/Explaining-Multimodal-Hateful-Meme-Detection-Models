@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
     labels: {
       type: DataTypes.STRING,
       defaultValue: null,
+    },
+    remarks: {
+      type: DataTypes.STRING,
+      defaultValue: null,
     }
   }, {
     sequelize,

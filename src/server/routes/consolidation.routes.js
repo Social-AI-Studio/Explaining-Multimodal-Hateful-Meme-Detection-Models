@@ -17,7 +17,7 @@ module.exports = function(app) {
   );
 
   app.post(
-    "/api/memes/consolidations",
+    "/api/memes/consolidation",
     [authJwt.verifyToken],
     controller.saveConsolidation
   );
