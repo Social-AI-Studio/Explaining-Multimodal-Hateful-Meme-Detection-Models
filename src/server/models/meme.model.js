@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     entities: DataTypes.STRING,
     gender: DataTypes.STRING,
     race: DataTypes.STRING,
-    automated_labels: DataTypes.STRING
+    automated_labels: DataTypes.STRING,
+    final_labels: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Meme',
