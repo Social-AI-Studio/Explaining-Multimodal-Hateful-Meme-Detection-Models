@@ -80,12 +80,10 @@ export default {
       imagepath: `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/${this.annotation.Meme.image}`,
       protected_pc: this.annotation.Meme.gold_pc.split(","),
 
-      labels: this.annotation.labels,
-      remarks: this.annotation.remarks,
       createdAt: moment(this.annotation.createdAt).tz("Asia/Singapore"),
       updatedAt: moment(this.annotation.updatedAt).tz("Asia/Singapore"),
 
-      reasoning: "",
+      reasoning: this.annotation.reasoning,
       reasoningError: false
     };
   },
@@ -123,7 +121,7 @@ export default {
 
       const body = new URLSearchParams({
         memeId: this.annotation.id,
-        labels: this.labels.join(","),
+        reasoning: this.reasoning,
         remarks: this.remarks
       });
 
@@ -136,7 +134,7 @@ export default {
 
       const res = await axios
         .post(
-          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/consolidation`,
+          `${Settings.PROTOCOL}://${Settings.HOST}:${Settings.PORT}/api/memes/explanation`,
           body.toString(),
           config
         )
