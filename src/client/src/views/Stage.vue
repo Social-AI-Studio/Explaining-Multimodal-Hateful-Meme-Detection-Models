@@ -65,6 +65,27 @@
           </b-card>
         </div>
       </b-row>
+      <h4 align="center" class="mt-4 mb-4">Explanations</h4>
+      <b-row cols-md="4">
+        <div v-for="ex in explanations" :key="ex.id">
+          <b-card
+            border-variant="info"
+            :header="ex.name"
+            class="m-1"
+            align="center"
+          >
+            <b-card-text>
+              <p>Progress: {{ ex.currentCount }} / {{ ex.totalCount }}</p>
+            </b-card-text>
+
+            <router-link
+              :to="{ name: 'explanations', params: { stageId: ex.id } }"
+            >
+              <b-button variant="info">Start!</b-button>
+            </router-link>
+          </b-card>
+        </div>
+      </b-row>
     </b-container>
   </div>
 </template>
@@ -79,6 +100,7 @@ export default {
       annotations: [],
       checks: [],
       consolidations: [],
+      explanations: [],
     };
   },
   created() {
@@ -104,6 +126,7 @@ export default {
       this.annotations = res.data.filter(e => e.PhaseId === 1);
       this.checks = res.data.filter(e => e.PhaseId === 2);
       this.consolidations = res.data.filter(e => e.PhaseId === 3);
+      this.explanations = res.data.filter(e => e.PhaseId === 4);
     },
   },
 };

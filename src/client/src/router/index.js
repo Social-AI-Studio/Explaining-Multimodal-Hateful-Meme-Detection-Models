@@ -42,6 +42,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Consolidation.vue')
   },
   {
+    path: '/explanations/:stageId',
+    name: 'explanations',
+    beforeEnter: requireAuth,
+    component: () => import(/* webpackChunkName: "about" */ '../views/Explanation.vue')
+  },
+  {
     path: '/logout',
     beforeEnter(to, from, next) {
       auth.logout()
