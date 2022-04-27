@@ -1,0 +1,1 @@
+{"pred_probs": 0.7065184712409973, "pred_class": "Not Hateful", "true_class": "Hateful", "attr_class": "Hateful", "raw_input": ["[CLS]", "it", "'", "s", "the", "goat", "hum", "##per", ",", "looks", "like", "a", "bunch", "of", "pigs", "just", "walked", "over", "your", "grave", "[SEP]"], "convergence_score": 0.00022679815730919373}

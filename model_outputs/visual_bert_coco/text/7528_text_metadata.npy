@@ -1,0 +1,1 @@
+{"pred_probs": 0.9691146612167358, "pred_class": "Hateful", "true_class": "Hateful", "attr_class": "Hateful", "raw_input": ["[CLS]", "the", "latest", "and", "greatest", ".", "a", "truck", "that", "comes", "with", "a", "dish", "##wash", "##er", "!", "[SEP]"], "convergence_score": 0.009316821876360848}
