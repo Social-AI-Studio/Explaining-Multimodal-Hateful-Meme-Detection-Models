@@ -24,11 +24,15 @@ To compute the input feature attribution, we computed the [Integrated Gradients]
 from captum.attr import TokenReferenceBase
 
 # Text Baseline
-token_reference = TokenReferenceBase(reference_token_idx=102)
-text_baseline = token_reference.generate_reference(prepared_batch['input_ids'].shape[1], device='cuda').unsqueeze(0)
+text_length = 128 # or input_ids.shape[1]
+token_reference = TokenReferenceBase(reference_token_idx=102) # 102 is the [PAD] token ID
+text_baseline = token_reference.generate_reference(128, device='cuda').unsqueeze(0)
 
 # Image Baseline
-image_baseline = prepared_batch['image_feature_0'] * 0.0
+# "image_features" can represents either
+# (1) NxM matrix where N = length, M = width
+# (2) NxM matrix where N = num_features, M = num_dimensions
+image_baseline = image_features * 0.0 
 ```
 
 As the process of using Layer Integrated Gradients involves multiple steps, we strongly encourage that you visit the following tutorials to grasp a better understanding
@@ -39,7 +43,7 @@ Nonetheless, we have created a fork of the Facebook's *MMF* library with our imp
 
 ## Obtaining Attention Weights
 
-A primary focus of this paper focuses on analyzing the visual-text slurs alignments within *Transformer-based* models. the attention weights can be obtained from the respective models (i.e. VisualBERT, ViLBERT). The method of retrieving the attention weights is subjected to the libraries being used.
+Another important aspect of this paper focuses on analyzing the visual-text slurs alignments within *Transformer-based* models. In order to examine these alignments, we obtained the attention weights from the respective models (i.e. VisualBERT, ViLBERT). The method of retrieving the attention weights is subjected to the libraries being used.
 
 ### Facebook's "MMF" Library (Used in this paper)
 
